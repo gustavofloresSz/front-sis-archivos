@@ -1,0 +1,120 @@
+@if (nodes.length) {
+  <div class="flujo-wrapper">
+    <div class="flujo-help">
+      Usa la rueda para acercar o alejar. Arrastra el fondo para desplazarte y los nodos para moverlos.
+    </div>
+
+    <div class="flujo-canvas">
+      <ngx-graph
+        [nodes]="nodes"
+        [links]="links"
+        [layout]="layout"
+        [layoutSettings]="layoutSettings"
+        [enableZoom]="true"
+        [enablePan]="true"
+        [enableDrag]="true"
+        [autoCenter]="true"
+        [autoZoom]="true"
+        [minZoomLevel]="0.25"
+        [maxZoomLevel]="3"
+      >
+        <ng-template #defsTemplate>
+          <svg:marker
+            id="flujo-fisico-arrow"
+            viewBox="0 -5 10 10"
+            refX="9"
+            refY="0"
+            markerWidth="7"
+            markerHeight="7"
+            orient="auto"
+          >
+            <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
+          </svg:marker>
+        </ng-template>
+
+        <ng-template #nodeTemplate let-node>
+          <svg:g
+            class="flujo-node"
+            [class.flujo-node-current]="node.data?.esActual"
+            [class.flujo-node-retiro]="node.data?.tipo === 'RETIRO'"
+            [class.flujo-node-devolucion]="node.data?.tipo === 'DEVOLUCION'"
+            [class.flujo-node-traslado]="node.data?.tipo === 'TRASLADO'"
+            [class.flujo-node-inicio]="node.data?.tipo === 'INICIO'"
+          >
+            <svg:rect
+              rx="14"
+              ry="14"
+              [attr.width]="node.dimension?.width ?? 400"
+              [attr.height]="node.dimension?.height ?? 155"
+            />
+
+            <svg:circle
+              cx="24"
+              cy="30"
+              r="7"
+            />
+
+            <svg:text
+              x="45"
+              y="34"
+              class="node-title"
+            >
+              {{ node.label }}
+            </svg:text>
+
+            <svg:text
+              x="45"
+              y="62"
+              class="node-subtitle"
+            >
+              {{ node.data?.detallePrincipal }}
+            </svg:text>
+
+            @if (node.data?.fecha) {
+              <svg:text
+                x="45"
+                y="92"
+                class="node-detail"
+              >
+                Fecha: {{ node.data?.fecha }}
+              </svg:text>
+            }
+
+            <svg:text
+              x="45"
+              y="122"
+              class="node-detail"
+            >
+              Motivo: {{ node.data?.motivo }}
+            </svg:text>
+
+            @if (node.data?.esActual) {
+              <svg:text
+                class="current-label"
+                [attr.x]="(node.dimension?.width ?? 400) - 14"
+                y="20"
+                text-anchor="end"
+              >
+                ACTUAL
+              </svg:text>
+            }
+          </svg:g>
+        </ng-template>
+
+        <ng-template #linkTemplate let-link>
+          <svg:g class="flujo-link">
+            <svg:path class="line" marker-end="url(#flujo-fisico-arrow)">
+              <svg:title>
+                {{ link.data?.motivo || link.label }}
+              </svg:title>
+            </svg:path>
+          </svg:g>
+        </ng-template>
+      </ngx-graph>
+    </div>
+  </div>
+} @else {
+  <div class="flujo-empty">
+    No existe información suficiente para graficar el flujo físico del expediente.
+  </div>
+}

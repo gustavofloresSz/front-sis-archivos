@@ -1,0 +1,47 @@
+<h2 mat-dialog-title class="flex items-center gap-2">
+  <mat-icon>{{ esEdicion ? 'edit_location' : 'add_location' }}</mat-icon>
+  {{ esEdicion ? 'Editar Institución' : 'Agregar Institución' }}
+</h2>
+
+<form [formGroup]="institucionForm" (ngSubmit)="guardarInstitucion()">
+
+  <mat-dialog-content class="flex w-full flex-col gap-4 pt-2 sm:min-w-[360px]">
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre">
+      <mat-icon matSuffix>location_city</mat-icon>
+
+      <mat-error *ngIf="institucionForm.get('nombre')?.hasError('required')">
+        El nombre es obligatorio
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Sigla</mat-label>
+      <input matInput formControlName="sigla" maxlength="20" class="uppercase">
+      <mat-icon matSuffix>short_text</mat-icon>
+
+      <mat-error *ngIf="institucionForm.get('sigla')?.hasError('required')">
+        La sigla es obligatoria
+      </mat-error>
+    </mat-form-field>
+
+    <p *ngIf="errorMensaje" class="text-sm text-red-600">
+      {{ errorMensaje }}
+    </p>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancelar()" [disabled]="guardando">
+      Cancelar
+    </button>
+
+    <button mat-flat-button color="primary" type="submit" [disabled]="guardando">
+      <mat-icon>{{ guardando ? 'hourglass_empty' : 'save' }}</mat-icon>
+      {{ guardando ? 'Guardando...' : esEdicion ? 'Actualizar' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
+
+</form>

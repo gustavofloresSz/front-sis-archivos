@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.reporte-fisico-page {
+  padding: 1rem;
+}
+
+.reporte-fisico-page-lista {
+  display: flex;
+  height: calc(100vh - 150px);
+  flex-direction: column;
+}
+
+.search-card,
+.search-card-content {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.resultados-panel {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-mdc-header-cell {
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #f8fafc;
+}
+
+td.mat-mdc-cell {
+  color: #334155;
+  font-size: 13px;
+}

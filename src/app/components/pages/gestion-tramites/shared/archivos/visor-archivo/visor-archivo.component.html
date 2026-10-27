@@ -1,0 +1,22 @@
+<div class="mt-4 overflow-hidden rounded-xl border border-gray-300 bg-white">
+  <div class="flex items-center justify-between gap-3 bg-slate-800 px-4 py-2 text-white">
+    <span class="truncate text-sm font-medium">{{ nombre }}</span>
+    <button
+      mat-icon-button
+      type="button"
+      class="text-white"
+      aria-label="Cerrar vista previa del PDF"
+      title="Cerrar vista previa"
+      (click)="cerrar.emit()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <iframe
+    class="w-full border-0"
+    [style.height]="altura"
+    [src]="url"
+    title="Vista previa del PDF"
+  ></iframe>
+</div>

@@ -1,0 +1,162 @@
+:host {
+  display: block;
+}
+
+.flujo-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.flujo-help {
+  padding: 10px 14px;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 13px;
+}
+
+.flujo-canvas {
+  height: 460px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background:
+    linear-gradient(#f8fafc 1px, transparent 1px),
+    linear-gradient(90deg, #f8fafc 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+ngx-graph {
+  width: 100%;
+  height: 100%;
+}
+
+.flujo-node rect {
+  fill: #ffffff;
+  stroke: #cbd5e1;
+  stroke-width: 2;
+  filter: drop-shadow(0 8px 14px rgb(15 23 42 / 0.12));
+}
+
+.flujo-node circle {
+  fill: #64748b;
+}
+
+.flujo-node-inicio rect {
+  stroke: #6366f1;
+}
+
+.flujo-node-inicio circle {
+  fill: #6366f1;
+}
+
+.flujo-node-retiro rect {
+  stroke: #ef4444;
+}
+
+.flujo-node-retiro circle {
+  fill: #ef4444;
+}
+
+.flujo-node-devolucion rect {
+  stroke: #22c55e;
+}
+
+.flujo-node-devolucion circle {
+  fill: #22c55e;
+}
+
+.flujo-node-traslado rect {
+  stroke: #3b82f6;
+}
+
+.flujo-node-traslado circle {
+  fill: #3b82f6;
+}
+
+.flujo-node-current rect {
+  stroke-width: 3;
+}
+
+.node-title {
+  fill: #0f172a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.node-subtitle {
+  fill: #334155;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.current-label {
+  fill: #16a34a;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.flujo-link .line {
+  stroke: #64748b;
+  stroke-width: 2.5;
+  fill: none;
+}
+
+.arrow-head {
+  fill: #64748b;
+}
+
+.flujo-empty {
+  padding: 28px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #64748b;
+  text-align: center;
+  font-size: 14px;
+}
+
+.flujo-history {
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.flujo-history h4 {
+  margin: 0 0 12px;
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.history-item {
+  padding: 12px 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.history-item:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.history-title {
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.history-item p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.node-detail {
+  fill: #475569;
+  font-size: 11px;
+  font-weight: 500;
+}

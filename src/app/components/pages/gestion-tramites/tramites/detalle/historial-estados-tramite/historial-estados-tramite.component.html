@@ -1,0 +1,65 @@
+<section class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <h3 class="m-0 flex items-center gap-2 text-base font-semibold text-slate-800">
+        <mat-icon class="text-[#0083b0]">history</mat-icon>
+        Flujo de trabajo
+      </h3>
+      <p class="m-0 mt-1 text-sm text-slate-500">
+        Historial cronológico de estados, motivos y responsables.
+      </p>
+    </div>
+
+    <span
+      class="rounded-full px-3 py-1 text-xs font-semibold"
+      [ngClass]="clasesEstado(tramite?.estado_actual?.nombre)"
+    >
+      Estado actual: {{ tramite?.estado_actual?.nombre || 'Sin estado' }}
+    </span>
+  </div>
+
+  @if (historial.length) {
+    <div class="overflow-x-auto rounded-xl border border-slate-200">
+      <table class="w-full min-w-[760px] border-collapse text-sm">
+        <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Fecha</th>
+            <th class="px-4 py-3">Estado anterior</th>
+            <th class="px-4 py-3">Nuevo estado</th>
+            <th class="px-4 py-3">Motivo</th>
+            <th class="px-4 py-3">Responsable</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of historial; track item.id ?? $index) {
+            <tr class="border-t border-slate-200 align-top hover:bg-slate-50">
+              <td class="whitespace-nowrap px-4 py-3 text-slate-600">
+                {{ item?.fecha_cambio ? (item.fecha_cambio | date:'dd/MM/yyyy HH:mm') : 'Sin fecha' }}
+              </td>
+              <td class="px-4 py-3 text-slate-600">
+                {{ item?.estado_anterior?.nombre || 'Inicio' }}
+              </td>
+              <td class="px-4 py-3">
+                <span
+                  class="rounded-full px-2.5 py-1 text-xs font-semibold"
+                  [ngClass]="clasesEstado(item?.estado_nuevo?.nombre)"
+                >
+                  {{ item?.estado_nuevo?.nombre || 'Sin estado' }}
+                </span>
+              </td>
+              <td class="max-w-md whitespace-pre-wrap px-4 py-3 text-slate-700">
+                {{ item?.motivo || 'Sin motivo registrado' }}
+              </td>
+              <td class="px-4 py-3 text-slate-700">{{ responsable(item) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-500">
+      <mat-icon class="!h-10 !w-10 !text-[40px] text-slate-400">history_toggle_off</mat-icon>
+      <p class="m-0 mt-3 text-sm">El trámite todavía no tiene movimientos de estado registrados.</p>
+    </div>
+  }
+</section>

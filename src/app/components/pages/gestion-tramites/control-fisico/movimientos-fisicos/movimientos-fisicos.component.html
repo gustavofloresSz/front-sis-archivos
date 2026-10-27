@@ -1,0 +1,238 @@
+<div class="movimientos-page">
+  @if (modoVista === 'busqueda') {
+  <div class="mb-6">
+    <h1 class="m-0 text-2xl font-bold text-slate-800">
+      Movimientos físicos
+    </h1>
+
+    <p class="m-0 mt-1 text-sm text-slate-500">
+      Registre retiros, devoluciones y traslados físicos de expedientes.
+    </p>
+  </div>
+
+  <div class="rounded-xl bg-white p-5 shadow-sm border border-slate-200">
+    <div class="mb-4 flex max-w-4xl flex-col gap-3 md:flex-row md:items-start">
+      <mat-form-field appearance="outline" class="w-full md:flex-1">
+        <mat-label>Buscar trámite</mat-label>
+
+        <input
+          matInput
+          [(ngModel)]="busqueda"
+          (input)="buscarTramitesAutomatico()"
+          (keyup.enter)="buscarTramites(true)"
+          placeholder="Código, año, sigla, solicitante, folder o código catastral"
+        >
+
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <button
+        mat-mini-fab
+        color="primary"
+        type="button"
+        class="shrink-0 md:mt-2"
+        aria-label="Buscar trámites"
+        matTooltip="Buscar trámites"
+        [disabled]="cargando"
+        (click)="buscarTramites(true)"
+      >
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
+
+    @if (errorMensaje) {
+      <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {{ errorMensaje }}
+      </div>
+    }
+
+    @if (!busqueda.trim()) {
+      <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+        Ingrese un criterio de búsqueda para mostrar trámites.
+      </div>
+    } @else if (cargando) {
+      <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+        Buscando trámites...
+      </div>
+    } @else if (tramitesFiltrados.length === 0) {
+      <div class="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-6 text-center text-sm text-yellow-700">
+        No se encontraron trámites con ese criterio de búsqueda.
+      </div>
+    } @else {
+      <div class="resultados-panel relative overflow-hidden rounded-xl border border-slate-200">
+      <div class="min-h-0 flex-1 overflow-auto">
+        <table mat-table [dataSource]="tramitesFiltrados" class="w-full">
+
+          <ng-container matColumnDef="codigo_tramite">
+            <th mat-header-cell *matHeaderCellDef>
+              Código
+            </th>
+
+            <td mat-cell *matCellDef="let tramite">
+              <span class="font-medium text-slate-700">
+                {{ tramite.codigo_tramite }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="nombres_apellidos">
+            <th mat-header-cell *matHeaderCellDef>
+              Solicitante
+            </th>
+
+            <td mat-cell *matCellDef="let tramite">
+              {{ tramite.nombres_apellidos }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="ubicacion">
+            <th mat-header-cell *matHeaderCellDef>
+              Ubicación física base
+            </th>
+
+            <td mat-cell *matCellDef="let tramite">
+              <span [class.text-red-600]="!tramite.ubicacion_fisica_id">
+                {{ ubicacionTramite(tramite) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado_fisico">
+            <th mat-header-cell *matHeaderCellDef>
+              Estado físico
+            </th>
+
+            <td mat-cell *matCellDef="let tramite">
+              @if (estadoFisicoTramite(tramite) === 'RETIRADO') {
+                <div class="inline-flex flex-col rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-xs">
+                  <span class="font-semibold text-red-700">
+                    Retirado
+                  </span>
+
+                  @if (ultimoResponsableFisico(tramite)) {
+                    <span class="text-red-600">
+                      {{ ultimoResponsableFisico(tramite) }}
+                    </span>
+                  }
+                </div>
+              } @else if (estadoFisicoTramite(tramite) === 'EN_ARCHIVO') {
+                <span class="inline-flex rounded-lg border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                  En archivo
+                </span>
+              } @else if (estadoFisicoTramite(tramite) === 'SIN_ASIGNAR') {
+                <span class="inline-flex rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-1 text-xs font-semibold text-yellow-700">
+                  Sin asignar
+                </span>
+              } @else {
+                <span class="inline-flex rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
+                  {{ textoEstadoFisico(tramite) }}
+                </span>
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef class="px-4 py-2 font-bold text-gray-600 !text-center">
+              Acciones
+            </th>
+
+            <td mat-cell *matCellDef="let tramite" class="px-4 py-2 !text-center">
+              <div class="flex justify-center items-center gap-1 w-full">
+                @if (puedeRegistrar) {
+                <button
+                  mat-icon-button
+                  color="accent"
+                  matTooltip="Ver detalle físico"
+                  type="button"
+                  (click)="verDetalleFisico(tramite)"
+                >
+                  <mat-icon>info</mat-icon>
+                </button>
+                }
+
+                <button
+                  mat-icon-button
+                  color="primary"
+                  matTooltip="Registrar movimiento físico"
+                  type="button"
+                  [disabled]="cargandoEstado || !tramite.ubicacion_fisica_id"
+                  (click)="abrirDialogMovimiento(tramite)"
+                >
+                  <mat-icon>sync_alt</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columnasTramites"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasTramites;"></tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        class="shrink-0 border-t border-slate-200 bg-white"
+        [length]="totalTramites"
+        [pageIndex]="page - 1"
+        [pageSize]="limit"
+        [pageSizeOptions]="pageSizeOptions"
+        showFirstLastButtons
+        (page)="cambiarPagina($event)"
+      >
+      </mat-paginator>
+      </div>
+    }
+  </div>
+  }
+
+  @if (modoVista === 'detalle') {
+    @if (cargandoDetalle) {
+      <div class="flex min-h-64 flex-col items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white p-8 text-slate-600 shadow-sm">
+        <mat-spinner diameter="42"></mat-spinner>
+        <span>Cargando información física...</span>
+      </div>
+    } @else if (errorDetalle) {
+      <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          class="mb-4"
+          (click)="volverAResultados()"
+        >
+          <mat-icon>arrow_back</mat-icon>
+          Volver a resultados
+        </button>
+
+        <div>{{ errorDetalle }}</div>
+      </div>
+    } @else if (tramiteSeleccionado) {
+      <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="mb-5">
+          <button
+            mat-stroked-button
+            color="primary"
+            type="button"
+            class="mb-4"
+            (click)="volverAResultados()"
+          >
+            <mat-icon>arrow_back</mat-icon>
+            Volver a resultados
+          </button>
+
+          <h2 class="m-0 text-xl font-bold text-slate-800">
+            {{ tramiteSeleccionado.codigo_tramite || 'Trámite seleccionado' }}
+          </h2>
+
+          <p class="m-0 mt-1 text-sm text-slate-500">
+            {{ tramiteSeleccionado.nombres_apellidos || 'Sin solicitante' }}
+          </p>
+        </div>
+
+        <app-detalle-fisico
+          [tramite]="tramiteSeleccionado"
+          [historial]="historialSeleccionado"
+        ></app-detalle-fisico>
+      </div>
+    }
+  }
+</div>

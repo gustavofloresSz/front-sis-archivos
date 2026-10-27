@@ -1,0 +1,54 @@
+.dialog-content {
+  width: min(900px, 82vw);
+  max-height: 70vh;
+  padding-top: 8px;
+}
+
+.permission-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.permission-card {
+  overflow: hidden;
+  border: 1px solid #dbe3ee;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.permission-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #f4f8fc;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.permission-card__options {
+  display: grid;
+  gap: 6px;
+  padding: 10px 14px 12px;
+}
+
+.estado-catalogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 160px;
+  color: #64748b;
+}
+
+@media (max-width: 720px) {
+  .dialog-content {
+    width: 88vw;
+  }
+
+  .permission-grid {
+    grid-template-columns: 1fr;
+  }
+}

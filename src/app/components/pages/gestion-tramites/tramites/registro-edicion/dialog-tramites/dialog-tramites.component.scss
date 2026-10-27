@@ -1,0 +1,12 @@
+:host ::ng-deep .compact-stepper .mat-horizontal-stepper-header-container {
+  margin-top: 0;
+}
+
+:host ::ng-deep .compact-stepper .mat-horizontal-stepper-header {
+  height: 60px;
+}
+
+:host ::ng-deep .compact-stepper .mat-horizontal-content-container {
+  padding-top: 0;
+  padding-bottom: 12px;
+}

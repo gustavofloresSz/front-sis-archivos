@@ -1,0 +1,50 @@
+/* Configuración base del Sidebar */
+.mat-drawer-container,
+.mat-drawer {
+  background-color: #212529 !important; /* Plomo Carbón */
+  box-shadow: none !important;
+  border: none !important;
+  width: 270px !important;
+}
+
+/* Header superior */
+.main-header {
+  background-color: #212529 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Texto e Iconos de los menús en blanco puro */
+.nav-item {
+  color: #ffffff !important; /* Texto blanco legible */
+  text-decoration: none;
+}
+
+.nav-item mat-icon {
+  color: #ffffff !important; /* Iconos en blanco puro */
+}
+
+/* Hover (Al pasar el cursor) */
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Opción ACTIVA (Seleccionada) */
+.nav-item.active {
+  background-color: #0083b0 !important; /* Celeste/Azul institucional */
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.nav-item.active mat-icon {
+  color: #ffffff !important;
+}
+
+/* Contenido central */
+.mat-drawer-content {
+  background-color: #f8fafc !important;
+  color: #111827;
+}
+/* Forzar iconos del header en blanco nítido */
+.main-header mat-icon {
+  color: #ffffff !important;
+}

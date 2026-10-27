@@ -1,0 +1,301 @@
+<div class="reporte-fisico-page" [class.reporte-fisico-page-lista]="modoVista === 'busqueda'">
+  @if (modoVista === 'busqueda') {
+    <div class="mb-6">
+      <h1 class="m-0 text-2xl font-bold text-slate-800">
+        Reporte de movimientos físicos
+      </h1>
+
+      <p class="m-0 mt-1 text-sm text-slate-500">
+        Consulte la ubicación física, el estado actual y la trazabilidad del expediente.
+      </p>
+    </div>
+  }
+
+  @if (modoVista === 'busqueda') {
+    <mat-card class="search-card !border-0 !bg-transparent !shadow-none">
+      <mat-card-content class="search-card-content !p-0">
+        <div class="mb-4 flex max-w-3xl items-center gap-2">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-0 flex-1">
+            <mat-label>Buscar trámite</mat-label>
+
+            <input
+              matInput
+              [formControl]="searchControl"
+              placeholder="Código, año, sigla, solicitante, folder o código catastral"
+              (keyup.enter)="buscarManual()"
+            >
+
+            <mat-icon matPrefix>search</mat-icon>
+
+            @if (searchControl.value) {
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                aria-label="Limpiar búsqueda"
+                (click)="limpiarBusqueda()"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </mat-form-field>
+
+          <button
+            mat-mini-fab
+            color="primary"
+            type="button"
+            class="shrink-0"
+            aria-label="Buscar trámites"
+            title="Buscar trámites"
+            [disabled]="cargandoTabla"
+            (click)="buscarManual()"
+          >
+            <mat-icon>search</mat-icon>
+          </button>
+        </div>
+
+        @if (errorTabla) {
+          <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {{ errorTabla }}
+          </div>
+        }
+
+        @if (!busquedaRealizada && !cargandoTabla) {
+          <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center">
+            <mat-icon class="mb-2 !h-12 !w-12 !text-5xl text-slate-400">
+              manage_search
+            </mat-icon>
+
+            <h3 class="m-0 text-base font-semibold text-slate-700">
+              Realice una búsqueda
+            </h3>
+
+            <p class="m-0 mt-1 text-sm text-slate-500">
+              Ingrese un criterio para mostrar trámites con control físico.
+            </p>
+          </div>
+        } @else {
+          <div class="resultados-panel relative overflow-hidden rounded-xl border border-slate-200">
+            @if (cargandoTabla) {
+              <div class="absolute inset-0 z-10 flex items-center justify-center bg-white/70">
+                <mat-spinner diameter="38"></mat-spinner>
+              </div>
+            }
+
+            <div class="min-h-0 flex-1 overflow-auto">
+              <table mat-table [dataSource]="tramites" class="w-full">
+                <ng-container matColumnDef="codigo_tramite">
+                  <th mat-header-cell *matHeaderCellDef class="min-w-[240px] whitespace-nowrap">
+                    Código
+                  </th>
+
+                  <td mat-cell *matCellDef="let tramite" class="min-w-[240px] whitespace-nowrap">
+                    <span class="text-slate-700">
+                      {{ tramite.codigo_tramite || '—' }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="solicitante">
+                  <th mat-header-cell *matHeaderCellDef>
+                    Solicitante
+                  </th>
+
+                  <td mat-cell *matCellDef="let tramite">
+                    {{ tramite.nombres_apellidos || '—' }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ubicacion">
+                  <th mat-header-cell *matHeaderCellDef>
+                    Ubicación física
+                  </th>
+
+                  <td mat-cell *matCellDef="let tramite">
+                    <span [class.text-red-600]="!tramite.ubicacion_fisica_id">
+                      {{ ubicacionTramite(tramite) }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="estado_fisico">
+                  <th mat-header-cell *matHeaderCellDef>
+                    Estado físico
+                  </th>
+
+                  <td mat-cell *matCellDef="let tramite">
+                    @if (estadoFisicoTramite(tramite) === 'RETIRADO') {
+                      <div class="inline-flex flex-col rounded-lg border border-red-200 bg-red-50 px-3 py-1 text-xs">
+                        <span class="font-semibold text-red-700">
+                          Retirado
+                        </span>
+
+                        @if (ultimoResponsableFisico(tramite)) {
+                          <span class="text-red-600">
+                            {{ ultimoResponsableFisico(tramite) }}
+                          </span>
+                        }
+                      </div>
+                    } @else if (estadoFisicoTramite(tramite) === 'EN_ARCHIVO') {
+                      <span class="inline-flex rounded-lg border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                        En archivo
+                      </span>
+                    } @else if (estadoFisicoTramite(tramite) === 'SIN_ASIGNAR') {
+                      <span class="inline-flex rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-1 text-xs font-semibold text-yellow-700">
+                        Sin asignar
+                      </span>
+                    } @else {
+                      <span class="inline-flex rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
+                        {{ textoEstadoFisico(tramite) }}
+                      </span>
+                    }
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="ultimo_movimiento">
+                  <th mat-header-cell *matHeaderCellDef>
+                    Último movimiento
+                  </th>
+
+                  <td mat-cell *matCellDef="let tramite">
+                    <span class="text-sm text-slate-600">
+                      {{ textoUltimoMovimiento(tramite) }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="acciones">
+                  <th mat-header-cell *matHeaderCellDef class="text-center">
+                    Acciones
+                  </th>
+
+                  <td mat-cell *matCellDef="let tramite" class="text-center">
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      type="button"
+                      (click)="verReporte(tramite)"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                      Ver reporte
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                  <td
+                    class="mat-cell px-4 py-8 text-center text-slate-500"
+                    [attr.colspan]="displayedColumns.length"
+                  >
+                    No se encontraron trámites con el criterio ingresado.
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <mat-paginator
+              class="shrink-0 border-t border-slate-200 bg-white"
+              [length]="total"
+              [pageIndex]="page - 1"
+              [pageSize]="limit"
+              [pageSizeOptions]="pageSizeOptions"
+              showFirstLastButtons
+              (page)="cambiarPagina($event)"
+            >
+            </mat-paginator>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (modoVista === 'detalle') {
+    @if (cargandoDetalle) {
+      <div class="flex min-h-64 flex-col items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white p-8 text-slate-600 shadow-sm">
+        <mat-spinner diameter="42"></mat-spinner>
+        <span>Cargando reporte físico...</span>
+      </div>
+    } @else if (errorDetalle) {
+      <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        {{ errorDetalle }}
+      </div>
+    } @else {
+      <mat-card class="!rounded-xl !border !border-slate-200 !shadow-sm">
+        <mat-card-content>
+          <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div>
+              <button
+                mat-stroked-button
+                color="primary"
+                type="button"
+                class="mb-4"
+                (click)="volverAResultados()"
+              >
+                <mat-icon>arrow_back</mat-icon>
+                {{ detalleCargadoDesdeUrl ? 'Volver' : 'Volver a resultados' }}
+              </button>
+
+              <h2 class="m-0 text-xl font-bold text-slate-800">
+                {{ tramiteSeleccionado?.codigo_tramite || 'Trámite seleccionado' }}
+              </h2>
+
+              <p class="m-0 mt-1 text-sm text-slate-500">
+                {{ tramiteSeleccionado?.nombres_apellidos || 'Sin solicitante' }}
+              </p>
+            </div>
+          </div>
+
+          @if (soloInformacionFisica) {
+            <app-detalle-fisico
+              [tramite]="tramiteSeleccionado"
+              [historial]="historial"
+            ></app-detalle-fisico>
+          } @else {
+            <mat-tab-group animationDuration="250ms" mat-stretch-tabs="false">
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-icon class="mr-2">inventory_2</mat-icon>
+                  Información física
+                </ng-template>
+
+                <div class="pt-5">
+                  <app-detalle-fisico
+                    [tramite]="tramiteSeleccionado"
+                    [historial]="historial"
+                  ></app-detalle-fisico>
+                </div>
+              </mat-tab>
+
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-icon class="mr-2">account_tree</mat-icon>
+                  Flujo gráfico
+                </ng-template>
+
+                <div class="pt-5">
+                  <div class="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <h3 class="m-0 text-base font-semibold text-slate-800">
+                      Flujo gráfico físico
+                    </h3>
+
+                    <p class="m-0 mt-1 text-sm text-slate-500">
+                      Representación visual de los retiros, devoluciones y traslados físicos registrados.
+                    </p>
+                  </div>
+
+                  <app-flujo-grafico-fisico
+                    [tramite]="tramiteSeleccionado"
+                    [historial]="historial"
+                  ></app-flujo-grafico-fisico>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</div>

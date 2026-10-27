@@ -1,0 +1,474 @@
+:host {
+  display: block;
+}
+
+.consulta-page {
+  display: grid;
+  min-height: 100dvh;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  place-items: center;
+  background:
+    linear-gradient(135deg, rgb(2 15 23 / 78%), rgb(7 36 49 / 58%)),
+    url('/imagenes/fondo_consulta1.jpg') center / cover fixed no-repeat;
+}
+
+.consulta-shell {
+  width: min(100%, 58rem);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 38%);
+  border-radius: 1.25rem;
+  background: rgb(255 255 255 / 97%);
+  box-shadow: 0 24px 70px rgb(2 15 23 / 38%);
+}
+
+.consulta-header {
+  display: flex;
+  min-height: 6.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  color: #fff;
+  background: linear-gradient(115deg, #0f2635, #123f55);
+  border-bottom: 3px solid #0083b0;
+}
+
+.consulta-brand,
+.header-title-row,
+.message-row,
+.agent-message-footer,
+.composer-row,
+.composer-actions,
+.voice-notice,
+.loading-copy {
+  display: flex;
+  align-items: center;
+}
+
+.consulta-brand {
+  min-width: 0;
+  gap: 0.9rem;
+}
+
+.header-icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 0.8rem;
+  color: #d8f5ff;
+  background: rgb(255 255 255 / 10%);
+}
+
+.header-copy {
+  min-width: 0;
+
+  h1,
+  p {
+    margin: 0;
+  }
+
+  h1 {
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    margin-top: 0.3rem;
+    color: #c9dce5;
+    font-size: 0.86rem;
+  }
+}
+
+.header-title-row {
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgb(134 239 172 / 30%);
+  border-radius: 999px;
+  color: #d1fae5;
+  background: rgb(22 101 52 / 35%);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 3px rgb(74 222 128 / 14%);
+}
+
+.header-action {
+  flex: 0 0 auto;
+  color: #e0f2fe;
+  background: rgb(255 255 255 / 8%);
+}
+
+.conversation {
+  height: clamp(28rem, 58dvh, 39rem);
+  overflow-y: auto;
+  padding: clamp(1rem, 2.5vw, 1.6rem);
+  background:
+    linear-gradient(rgb(248 250 252 / 94%), rgb(241 245 249 / 97%)),
+    radial-gradient(circle at top right, #dff5fc, transparent 44%);
+  scroll-behavior: smooth;
+  scrollbar-color: #94a3b8 transparent;
+  scrollbar-width: thin;
+}
+
+.message-row {
+  width: 100%;
+  margin-bottom: 1.15rem;
+}
+
+.message-row-user {
+  justify-content: flex-end;
+}
+
+.message-row-agent {
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.7rem;
+}
+
+.message-group {
+  display: flex;
+  max-width: min(78%, 38rem);
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.message-group-user {
+  align-items: flex-end;
+}
+
+.message-author {
+  padding: 0 0.35rem;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.user-message {
+  padding: 0.8rem 1rem;
+  border-radius: 1rem 1rem 0.25rem;
+  color: #fff;
+  background: linear-gradient(135deg, #123f55, #0f2635);
+  box-shadow: 0 6px 18px rgb(15 38 53 / 18%);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.agent-avatar {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: 0 0 2.35rem;
+  place-items: center;
+  border: 1px solid #bae6fd;
+  border-radius: 50%;
+  color: #03698c;
+  background: #e5f7fd;
+
+  mat-icon {
+    width: 1.3rem;
+    height: 1.3rem;
+    font-size: 1.3rem;
+  }
+}
+
+.agent-message {
+  width: min(88%, 43rem);
+  overflow: hidden;
+  border: 1px solid #dbe4ea;
+  border-radius: 0.3rem 1rem 1rem;
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(15 23 42 / 6%);
+}
+
+.agent-message-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5ebef;
+  background: #f8fafc;
+
+  h2,
+  span {
+    display: block;
+    margin: 0;
+  }
+
+  h2 {
+    color: #1e293b;
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  span {
+    margin-top: 0.15rem;
+    color: #64748b;
+    font-size: 0.72rem;
+  }
+}
+
+.agent-message-content {
+  padding: 0.95rem 1rem;
+  color: #334155;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.agent-message-footer {
+  min-height: 2.9rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.7rem 0.45rem 1rem;
+  border-top: 1px solid #e5ebef;
+  color: #64748b;
+  background: #f8fafc;
+  font-size: 0.72rem;
+}
+
+.audio-control {
+  min-width: 6.5rem;
+  color: #075985;
+  border-color: #cbdce5;
+
+  mat-icon {
+    margin-right: 0.3rem;
+  }
+}
+
+.audio-control-active {
+  color: #991b1b;
+  border-color: #fecaca;
+  background: #fff7f7;
+}
+
+.loading-message {
+  width: auto;
+  min-width: min(78%, 22rem);
+  padding: 0.9rem 1rem;
+}
+
+.loading-copy {
+  gap: 0.85rem;
+
+  strong,
+  p {
+    margin: 0;
+  }
+
+  strong {
+    color: #334155;
+    font-size: 0.86rem;
+  }
+
+  p {
+    margin-top: 0.15rem;
+    color: #64748b;
+    font-size: 0.78rem;
+  }
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+
+  i {
+    width: 0.36rem;
+    height: 0.36rem;
+    border-radius: 50%;
+    background: #0083b0;
+    animation: typing 1.15s infinite ease-in-out;
+  }
+
+  i:nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  i:nth-child(3) {
+    animation-delay: 240ms;
+  }
+}
+
+.composer {
+  padding: 1rem 1.1rem;
+  border-top: 1px solid #dbe4ea;
+  background: #fff;
+}
+
+.composer-row {
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.message-input {
+  width: 100%;
+  flex: 1 1 auto;
+}
+
+.composer-actions {
+  flex: 0 0 auto;
+  gap: 0.55rem;
+}
+
+.composer-button {
+  width: 3.25rem !important;
+  height: 3.25rem !important;
+  flex: 0 0 3.25rem;
+  box-shadow: none !important;
+}
+
+.microphone-button {
+  color: #0f3b4d;
+  background: #e6f3f7;
+}
+
+.send-button {
+  color: #fff;
+  background: #0f3b4d;
+}
+
+.microphone-active {
+  color: #fff;
+  background: #b91c1c;
+  animation: microphone-pulse 1.25s infinite;
+}
+
+.voice-notice {
+  gap: 0.45rem;
+  margin: 0.65rem 0 0;
+  color: #526574;
+  font-size: 0.78rem;
+
+  mat-icon {
+    width: 1rem;
+    height: 1rem;
+    font-size: 1rem;
+  }
+}
+
+.voice-notice-processing {
+  color: #03698c;
+}
+
+.voice-notice-warning {
+  color: #a16207;
+}
+
+.spinning-icon {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-0.18rem);
+  }
+}
+
+@keyframes microphone-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(185 28 28 / 40%);
+  }
+
+  70% {
+    box-shadow: 0 0 0 0.75rem rgb(185 28 28 / 0%);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgb(185 28 28 / 0%);
+  }
+}
+
+@media (max-width: 640px) {
+  .consulta-page {
+    min-height: 100dvh;
+    padding: 0;
+    place-items: stretch;
+  }
+
+  .consulta-shell {
+    min-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .consulta-header {
+    min-height: 5.5rem;
+    padding: 1rem;
+  }
+
+  .status-badge,
+  .header-copy p {
+    display: none;
+  }
+
+  .conversation {
+    height: calc(100dvh - 12.5rem);
+    min-height: 24rem;
+    padding: 1rem;
+  }
+
+  .message-group,
+  .agent-message {
+    max-width: 91%;
+  }
+
+  .agent-message-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .audio-control {
+    width: 100%;
+  }
+
+  .composer {
+    padding: 0.8rem;
+  }
+
+  .composer-row {
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .composer-actions {
+    gap: 0.35rem;
+  }
+
+  .composer-button {
+    width: 2.85rem !important;
+    height: 2.85rem !important;
+    flex-basis: 2.85rem;
+  }
+}

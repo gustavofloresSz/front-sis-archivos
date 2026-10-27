@@ -1,0 +1,202 @@
+<section class="sello-panel">
+  <div class="sello-intro">
+    <p>
+      Consulte los documentos asociados y gestione el sello de los PDF.
+      @if (puedeGestionarArchivos) {
+        Puede adjuntar archivos PDF, imágenes, Word o Excel.
+      }
+    </p>
+
+    @if (puedeGestionarArchivos) {
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        [disabled]="cargandoArchivos"
+        (click)="selectorArchivos.click()"
+      >
+        <mat-icon>upload_file</mat-icon>
+        Agregar archivo
+      </button>
+
+      <input
+        #selectorArchivos
+        hidden
+        type="file"
+        [accept]="formatosArchivosPermitidos"
+        multiple
+        (change)="seleccionarArchivos($event)"
+      >
+    }
+  </div>
+
+  @if (mensaje) {
+    <div class="sello-message" [class.sello-message-error]="mensajeError">
+      <mat-icon>{{ mensajeError ? 'error' : 'check_circle' }}</mat-icon>
+      <span>{{ mensaje }}</span>
+    </div>
+  }
+
+  @if (puedeGestionarArchivos && archivosSeleccionados.length) {
+    <div class="sello-selection">
+      <div class="sello-selection-header">
+        <span>
+          {{ archivosSeleccionados.length }}
+          {{ archivosSeleccionados.length === 1 ? 'archivo seleccionado' : 'archivos seleccionados' }}
+        </span>
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          [disabled]="cargandoArchivos"
+          (click)="agregarArchivos()"
+        >
+          @if (cargandoArchivos) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            <mat-icon>cloud_upload</mat-icon>
+          }
+          {{ cargandoArchivos ? 'Agregando...' : 'Agregar al trámite' }}
+        </button>
+      </div>
+
+      <div class="sello-selection-list">
+        @for (archivo of archivosSeleccionados; track archivo.name + archivo.size; let i = $index) {
+          <div class="sello-selection-file">
+            <mat-icon>{{ iconoParaArchivo(archivo) }}</mat-icon>
+            <span class="truncate">{{ nombreArchivoSinExtension(archivo) }}</span>
+            <span class="sello-extension">{{ extensionArchivo(archivo) }}</span>
+            <button
+              mat-icon-button
+              type="button"
+              aria-label="Quitar archivo seleccionado"
+              [disabled]="cargandoArchivos"
+              (click)="quitarArchivoSeleccionado(i)"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (archivosActivos.length === 0) {
+    <div class="sello-empty">
+      <mat-icon>folder_open</mat-icon>
+      <p>Este trámite no tiene archivos activos.</p>
+    </div>
+  } @else {
+    <div class="sello-list">
+      <div class="sello-list-header" aria-hidden="true">
+        <span>Archivo</span>
+        <span>Extensión</span>
+        <span>Acciones</span>
+      </div>
+
+      @for (archivo of archivosActivos; track archivo.id) {
+        <article class="sello-file">
+          <div class="sello-file-main">
+            <div class="sello-file-icon">
+              <mat-icon>{{ iconoParaArchivo(archivo) }}</mat-icon>
+            </div>
+
+            <div class="sello-file-info">
+              <span class="sello-file-name">{{ nombreArchivoSinExtension(archivo) }}</span>
+              <span
+                class="sello-file-status"
+                [class.sello-file-status-done]="archivo.es_sellado"
+              >
+                {{ esPdf(archivo) ? (archivo.es_sellado ? 'PDF sellado' : 'PDF original') : 'Documento adjunto' }}
+              </span>
+            </div>
+          </div>
+
+          <span class="sello-extension">{{ extensionArchivo(archivo) }}</span>
+
+          <div class="sello-file-actions">
+            @if (puedeDescargarArchivos) {
+              <button
+                mat-stroked-button
+                color="primary"
+                type="button"
+                [disabled]="descargandoArchivoId !== null"
+                (click)="descargarArchivo(archivo)"
+              >
+                @if (descargandoArchivoId === archivo.id) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  <mat-icon>download</mat-icon>
+                }
+                {{ descargandoArchivoId === archivo.id ? 'Descargando...' : 'Descargar' }}
+              </button>
+            }
+
+            @if (esPdf(archivo)) {
+              @if (puedeVerArchivos) {
+              <button
+                mat-stroked-button
+                color="primary"
+                type="button"
+                (click)="verPdf(archivo)"
+              >
+                <mat-icon>visibility</mat-icon>
+                Ver PDF
+              </button>
+              } @else {
+                <span class="text-xs text-slate-500">Contenido restringido</span>
+              }
+
+              @if (puedeAplicarSello && !archivo.es_sellado) {
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="button"
+                  [disabled]="aplicandoArchivoId !== null"
+                  (click)="aplicarSello(archivo)"
+                >
+                  @if (aplicandoArchivoId === archivo.id) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                  } @else {
+                    <mat-icon>approval</mat-icon>
+                  }
+                  {{ aplicandoArchivoId === archivo.id ? 'Aplicando...' : 'Aplicar sello' }}
+                </button>
+              } @else if (archivo.es_sellado) {
+                <div class="sello-done">
+                  <mat-icon>verified</mat-icon>
+                  Generado
+                </div>
+              }
+            } @else {
+              <span class="text-xs text-slate-500">
+                {{ puedeVerArchivos ? 'Sin vista previa' : 'Contenido restringido' }}
+              </span>
+            }
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (cargandoPdf) {
+      <div class="mt-4 flex items-center justify-center gap-3 rounded-lg bg-gray-50 p-5">
+        <mat-spinner diameter="32"></mat-spinner>
+        <span class="text-sm text-gray-600">Cargando PDF...</span>
+      </div>
+    }
+
+    @if (errorPdf) {
+      <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        {{ errorPdf }}
+      </div>
+    }
+
+    @if (pdfUrl) {
+      <app-visor-archivo
+        [url]="pdfUrl"
+        [nombre]="nombreArchivo(archivoEnVista)"
+        (cerrar)="cerrarPdf()"
+      />
+    }
+  }
+</section>

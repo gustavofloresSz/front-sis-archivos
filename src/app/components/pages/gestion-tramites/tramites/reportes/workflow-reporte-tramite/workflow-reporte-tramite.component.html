@@ -1,0 +1,53 @@
+@if (tramite) {
+  <section class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+    <h3 class="mb-2 flex items-center gap-2 text-base font-semibold text-gray-800">
+      <mat-icon class="text-[#0083b0]">account_tree</mat-icon>
+      Flujo gráfico del trámite
+    </h3>
+
+    <div class="mb-3 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2.5">
+      <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
+        <div>
+          <p class="m-0 text-xs font-medium uppercase tracking-wide text-[#0083b0]">
+            Código
+          </p>
+          <p class="m-0 mt-1 text-sm font-semibold text-gray-800">
+            {{ tramite?.codigo_tramite || '—' }}
+          </p>
+        </div>
+
+        <div>
+          <p class="m-0 text-xs font-medium uppercase tracking-wide text-[#0083b0]">
+            Estado actual
+          </p>
+          <p class="m-0 mt-1">
+            <span
+              class="inline-block rounded-full px-2.5 py-1 text-xs font-semibold"
+              [ngClass]="clasesEstado(tramite?.estado_actual?.nombre)"
+            >
+            {{ tramite?.estado_actual?.nombre || '—' }}
+            </span>
+          </p>
+        </div>
+
+        <div>
+          <p class="m-0 text-xs font-medium uppercase tracking-wide text-[#0083b0]">
+            Observaciones vigentes
+          </p>
+          <p class="m-0 mt-1 text-sm font-semibold text-gray-800">
+            {{ tramite?.observaciones || 'Sin observaciones' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <app-workflow-grafico-tramite
+      [historial]="historialEstados"
+      [estadoActual]="tramite?.estado_actual"
+    ></app-workflow-grafico-tramite>
+  </section>
+} @else {
+  <div class="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-gray-500">
+    Seleccione un trámite para visualizar el flujo de trabajo.
+  </div>
+}

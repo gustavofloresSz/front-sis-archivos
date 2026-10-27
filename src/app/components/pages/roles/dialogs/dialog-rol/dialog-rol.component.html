@@ -1,0 +1,80 @@
+<h2 mat-dialog-title class="flex items-center gap-2">
+  <mat-icon>{{ esEdicion ? 'edit' : 'admin_panel_settings' }}</mat-icon>
+  {{ esEdicion ? 'Editar rol' : 'Crear rol' }}
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content class="dialog-content">
+    <section class="grid gap-3 md:grid-cols-2">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nombre del rol</mat-label>
+        <input matInput formControlName="nombre" maxlength="100" />
+        @if (form.controls.nombre.hasError('required')) {
+          <mat-error>El nombre es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Descripción (opcional)</mat-label>
+        <input matInput formControlName="descripcion" maxlength="300" />
+      </mat-form-field>
+    </section>
+
+    <div class="mb-3">
+      <h3 class="text-base font-semibold text-slate-800">Acciones permitidas</h3>
+      <p class="mt-1 text-sm text-slate-500">
+        Marque únicamente las funciones que podrá realizar este rol.
+      </p>
+    </div>
+
+    @if (cargandoCatalogo) {
+      <div class="estado-catalogo">
+        <mat-icon>hourglass_empty</mat-icon>
+        Cargando acciones disponibles...
+      </div>
+    } @else {
+      <div class="permission-grid">
+        @for (grupo of grupos; track grupo.recurso) {
+          <section class="permission-card">
+            <div class="permission-card__header">
+              <span>{{ grupo.etiqueta }}</span>
+              <mat-checkbox
+                [checked]="grupoCompleto(grupo)"
+                (change)="seleccionarGrupo(grupo, $event.checked)"
+                aria-label="Seleccionar todas las acciones del grupo"
+              >Todas</mat-checkbox>
+            </div>
+
+            <div class="permission-card__options">
+              @for (permiso of grupo.permisos; track permiso.accion) {
+                <mat-checkbox
+                  [checked]="estaSeleccionado(permiso)"
+                  (change)="cambiarSeleccion(permiso, $event.checked)"
+                >{{ etiquetaAccion(permiso) }}</mat-checkbox>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    }
+
+    @if (errorMensaje) {
+      <p class="mt-4 text-sm text-red-600">{{ errorMensaje }}</p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="gap-2 px-6 pb-4">
+    <button mat-button type="button" (click)="cancelar()" [disabled]="guardando">
+      Cancelar
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="guardando || cargandoCatalogo"
+    >
+      <mat-icon>{{ guardando ? 'hourglass_empty' : 'save' }}</mat-icon>
+      {{ guardando ? 'Guardando...' : 'Guardar rol' }}
+    </button>
+  </mat-dialog-actions>
+</form>

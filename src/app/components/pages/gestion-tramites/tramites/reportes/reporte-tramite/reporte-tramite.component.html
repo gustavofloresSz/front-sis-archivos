@@ -1,0 +1,70 @@
+<section class="reporte-tramite">
+  <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h3 class="m-0 text-base font-semibold text-gray-800">
+        Reporte del trámite
+      </h3>
+      <p class="m-0 mt-1 text-sm text-gray-500">
+        Vista previa del documento listo para descargar o imprimir.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        [disabled]="cargando"
+        (click)="cargarReporte()"
+      >
+        <mat-icon>refresh</mat-icon>
+        Actualizar
+      </button>
+
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        [disabled]="!reporteUrl"
+        (click)="descargarReporte()"
+      >
+        <mat-icon>download</mat-icon>
+        Descargar PDF
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        [disabled]="!visorCargado"
+        (click)="imprimirReporte()"
+      >
+        <mat-icon>print</mat-icon>
+        Imprimir
+      </button>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="estado-reporte">
+      <mat-spinner diameter="42"></mat-spinner>
+      <span>Generando reporte del trámite...</span>
+    </div>
+  } @else if (error) {
+    <div class="estado-reporte estado-error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error }}</span>
+      <button mat-stroked-button color="primary" type="button" (click)="cargarReporte()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (reporteUrl) {
+    <iframe
+      #visorPdf
+      class="visor-pdf"
+      [src]="reporteUrl"
+      title="Vista previa del reporte del trámite"
+      (load)="visorCargado = true"
+    ></iframe>
+  }
+</section>

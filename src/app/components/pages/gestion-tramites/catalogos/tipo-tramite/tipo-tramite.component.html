@@ -1,0 +1,81 @@
+<div class="flex h-[calc(100vh-150px)] flex-col p-4">
+  <div class="mb-4">
+    <h2 class="text-2xl font-bold">Administración de Tipos de Trámite</h2>
+  </div>
+
+  <div class="mb-4 flex items-center justify-between gap-4">
+  <form class="flex min-w-0 max-w-3xl flex-1 items-center gap-2" (ngSubmit)="buscar()">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-0 flex-1">
+      <mat-label>Buscar tipo de trámite</mat-label>
+      <input matInput name="busqueda" [(ngModel)]="busqueda" (ngModelChange)="buscarAlEscribir($event)" placeholder="Nombre o segmento">
+      @if (busqueda) {
+        <button matSuffix mat-icon-button type="button" aria-label="Limpiar búsqueda" (click)="limpiarBusqueda()"><mat-icon>close</mat-icon></button>
+      }
+    </mat-form-field>
+    <button mat-mini-fab color="primary" type="submit" aria-label="Buscar tipo de trámite" matTooltip="Buscar"><mat-icon>search</mat-icon></button>
+  </form>
+    @if (puedeCrear) {
+      <button mat-mini-fab color="primary" type="button" aria-label="Agregar tipo de trámite" matTooltip="Agregar tipo de trámite" (click)="agregarTipoTramite()"><mat-icon>add</mat-icon></button>
+    }
+  </div>
+
+  <div class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-gray-300 bg-white">
+    <div class="min-h-0 flex-1 overflow-auto">
+      <table mat-table [dataSource]="tiposTramite" class="w-full mat-elevation-z2">
+        <ng-container matColumnDef="nro">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 px-4 py-2 font-bold text-gray-600">Nro</th>
+          <td mat-cell *matCellDef="let tipo; let i = index" class="border-t px-4 py-2">
+            {{ pageIndex * pageSize + i + 1 }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 px-4 py-2 font-bold text-gray-600">Nombre</th>
+          <td mat-cell *matCellDef="let tipo" class="border-t px-4 py-2">{{ tipo.nombre }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="segmento">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 px-4 py-2 font-bold text-gray-600">Segmento</th>
+          <td mat-cell *matCellDef="let tipo" class="border-t px-4 py-2">
+            {{ tipo.segmento || 'Sin segmento' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="opciones">
+          <th mat-header-cell *matHeaderCellDef class="bg-gray-100 px-4 py-2 text-center font-bold text-gray-600">Opciones</th>
+          <td mat-cell *matCellDef="let tipo" class="border-t px-4 py-2 text-center">
+            <button
+              mat-icon-button
+              color="primary"
+              type="button"
+              aria-label="Editar tipo de trámite"
+              matTooltip="Editar tipo de trámite"
+              (click)="editarTipoTramite(tipo)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="transition-colors hover:bg-gray-50"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell px-4 py-8 text-center text-gray-500" [attr.colspan]="displayedColumns.length">
+            No existen tipos de trámite registrados.
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      class="shrink-0 border-t border-gray-200 bg-white"
+      [length]="totalRegistros"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      showFirstLastButtons
+      (page)="cambiarPagina($event)"
+    ></mat-paginator>
+  </div>
+</div>

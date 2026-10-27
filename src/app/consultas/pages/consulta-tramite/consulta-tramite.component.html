@@ -1,0 +1,210 @@
+<main class="consulta-page">
+  <mat-card class="consulta-shell">
+    <header class="consulta-header">
+      <div class="consulta-brand">
+        <div class="header-icon" aria-hidden="true">
+          <mat-icon>account_balance</mat-icon>
+        </div>
+
+        <div class="header-copy">
+          <div class="header-title-row">
+            <h1>Consulta de trámites</h1>
+            <span class="status-badge">
+              <span class="status-dot"></span>
+              Disponible
+            </span>
+          </div>
+          <p>Consulta requisitos, códigos y el estado de tus trámites.</p>
+        </div>
+      </div>
+
+      <button
+        mat-icon-button
+        class="header-action"
+        type="button"
+        (click)="alternarLecturaAutomatica()"
+        [attr.aria-pressed]="lecturaAutomatica"
+        [attr.aria-label]="
+          lecturaAutomatica
+            ? 'Desactivar lectura automática'
+            : 'Activar lectura automática'
+        "
+        [title]="
+          lecturaAutomatica
+            ? 'Desactivar lectura automática'
+            : 'Activar lectura automática'
+        "
+      >
+        <mat-icon>{{ lecturaAutomatica ? 'volume_up' : 'volume_off' }}</mat-icon>
+      </button>
+    </header>
+
+    <section
+      #conversacion
+      class="conversation"
+      aria-live="polite"
+      aria-label="Conversación con el asistente de trámites"
+    >
+      @for (item of mensajes; track $index; let indice = $index) {
+        @if (item.tipo === 'usuario') {
+          <div class="message-row message-row-user">
+            <div class="message-group message-group-user">
+              <span class="message-author">Tú</span>
+              <div class="user-message">
+                {{ item.texto }}
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="message-row message-row-agent">
+            <div class="agent-avatar" aria-hidden="true">
+              <mat-icon>support_agent</mat-icon>
+            </div>
+
+            <article class="agent-message">
+              <header class="agent-message-header">
+                <div>
+                  <h2>Asistente de trámites</h2>
+                  <span>Información institucional</span>
+                </div>
+              </header>
+
+              <div class="agent-message-content">
+                {{ item.texto }}
+              </div>
+
+              <footer class="agent-message-footer">
+                <span>Respuesta del asistente</span>
+
+                <button
+                  mat-stroked-button
+                  type="button"
+                  class="audio-control"
+                  [class.audio-control-active]="audioEnReproduccion(indice)"
+                  (click)="alternarAudio(item.texto, indice)"
+                  [attr.aria-label]="
+                    audioEnReproduccion(indice) || audioEnPreparacion(indice)
+                      ? 'Detener audio'
+                      : 'Escuchar respuesta'
+                  "
+                  [title]="
+                    audioEnReproduccion(indice) || audioEnPreparacion(indice)
+                      ? 'Detener audio'
+                      : 'Escuchar respuesta'
+                  "
+                >
+                  <mat-icon [class.spinning-icon]="audioEnPreparacion(indice)">
+                    {{
+                      audioEnPreparacion(indice)
+                        ? 'progress_activity'
+                        : audioEnReproduccion(indice)
+                          ? 'stop_circle'
+                          : 'volume_up'
+                    }}
+                  </mat-icon>
+                  <span>
+                    {{
+                      audioEnPreparacion(indice)
+                        ? 'Preparando'
+                        : audioEnReproduccion(indice)
+                          ? 'Detener'
+                          : 'Escuchar'
+                    }}
+                  </span>
+                </button>
+              </footer>
+            </article>
+          </div>
+        }
+      }
+
+      @if (cargando) {
+        <div class="message-row message-row-agent">
+          <div class="agent-avatar" aria-hidden="true">
+            <mat-icon>support_agent</mat-icon>
+          </div>
+
+          <article class="agent-message loading-message">
+            <div class="loading-copy">
+              <span class="typing-indicator" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </span>
+              <div>
+                <strong>Consultando información</strong>
+                <p>El asistente está preparando la respuesta…</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      }
+    </section>
+
+    <footer class="composer">
+      <div class="composer-row">
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="message-input"
+        >
+          <mat-label>{{ grabando ? 'Escuchando…' : 'Escribe o dicta tu consulta' }}</mat-label>
+          <input
+            matInput
+            [(ngModel)]="mensaje"
+            (keyup.enter)="enviarMensaje()"
+            [disabled]="cargando || transcribiendo || grabando"
+            placeholder="Ej.: consulta el trámite APRT-D4-2025-000001"
+            autocomplete="off"
+          />
+        </mat-form-field>
+
+        <div class="composer-actions">
+          <button
+            mat-fab
+            type="button"
+            class="composer-button microphone-button"
+            [class.microphone-active]="grabando"
+            (click)="alternarGrabacion()"
+            [disabled]="cargando || transcribiendo || !grabacionDisponible"
+            [attr.aria-label]="grabando ? 'Detener y transcribir' : 'Iniciar grabación'"
+            [title]="grabando ? 'Detener y transcribir' : 'Hablar'"
+          >
+            <mat-icon>{{ grabando ? 'stop' : 'mic' }}</mat-icon>
+          </button>
+
+          <button
+            mat-fab
+            type="button"
+            class="composer-button send-button"
+            (click)="enviarMensaje()"
+            [disabled]="cargando || transcribiendo || grabando || !mensaje.trim()"
+            aria-label="Enviar mensaje"
+            title="Enviar mensaje"
+          >
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      @if (avisoVoz) {
+        <p class="voice-notice" role="status">
+          <mat-icon>info</mat-icon>
+          {{ avisoVoz }}
+        </p>
+      }
+
+      @if (transcribiendo) {
+        <p class="voice-notice voice-notice-processing">
+          <mat-icon class="spinning-icon">progress_activity</mat-icon>
+          Procesando la grabación localmente…
+        </p>
+      }
+
+      @if (!grabacionDisponible) {
+        <p class="voice-notice voice-notice-warning">
+          <mat-icon>mic_off</mat-icon>
+          El micrófono no está disponible. Puedes continuar escribiendo normalmente.
+        </p>
+      }
+    </footer>
+  </mat-card>
+</main>

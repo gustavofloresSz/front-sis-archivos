@@ -1,0 +1,22 @@
+<div class="p-2">
+  <div class="flex flex-col gap-y-2 items-center pb-4">
+    <span class="text-base font-bold">{{ fullname() }}</span>
+    <span class="text-xs text-gray-500">{{ rol() }}</span>
+  </div>
+
+  <mat-divider />
+
+  <mat-action-list>
+    <button mat-list-item (click)="irConfiguracion()">
+      <mat-icon matListItemIcon>manage_accounts</mat-icon>
+      <div matListItemTitle>Configuraciones</div>
+    </button>
+
+    <button mat-list-item (click)="cerrarSesion()">
+      <mat-icon matListItemIcon>logout</mat-icon>
+      <div matListItemTitle>Cerrar sesión</div>
+    </button>
+  </mat-action-list>
+  <div class="flex justify-end">
+  </div>
+</div>

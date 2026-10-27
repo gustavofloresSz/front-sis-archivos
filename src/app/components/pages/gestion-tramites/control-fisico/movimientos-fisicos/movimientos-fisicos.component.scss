@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.movimientos-page {
+  padding: 12px 24px 24px;
+}
+
+.resultados-panel {
+  display: flex;
+  height: clamp(360px, calc(100vh - 390px), 680px);
+  flex-direction: column;
+}

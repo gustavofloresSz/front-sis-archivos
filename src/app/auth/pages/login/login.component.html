@@ -1,0 +1,53 @@
+<div class="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+  <mat-card class="w-full max-w-md !rounded-2xl !shadow-xl bg-white overflow-hidden">
+
+    <div class="flex flex-col items-center pt-10 pb-2 px-8">
+      
+      <div class="mb-4 flex justify-center w-full">
+        <img src="/imagenes/logo_alcaldia.png" alt="Logo Alcaldía" class="h-28 w-auto object-contain">
+      </div>
+      
+      <h2 class="text-2xl font-semibold text-slate-800 tracking-tight text-center">Bienvenido</h2>
+      <p class="text-slate-500 text-sm mt-1 text-center">Ingresa a tu cuenta para continuar</p>
+    </div>
+
+    <mat-card-content class="px-8 py-4">
+      <form [formGroup]="loginForm" (ngSubmit)="login()" class="flex flex-col gap-4">
+        
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Usuario</mat-label>
+          <input matInput placeholder="Ingresa tu usuario" formControlName="login" />
+          <mat-icon matSuffix class="text-slate-400">person</mat-icon>
+          <mat-error *ngIf="loginForm.get('login')?.invalid && loginForm.get('login')?.touched">
+            El usuario es obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" />
+          <button mat-icon-button matSuffix type="button" (click)="verPassword()">
+            <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            La contraseña es obligatoria
+          </mat-error>
+        </mat-form-field>
+
+        <p *ngIf="loginError" class="text-red-500 text-sm">{{ loginError }}</p>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="w-full h-12 rounded-xl flex items-center justify-center gap-2 mt-2"
+          type="submit"
+        >
+          <mat-icon>login</mat-icon>
+          <span>Ingresar</span>
+        </button>
+
+      </form>
+    </mat-card-content>
+
+  </mat-card>
+</div>
