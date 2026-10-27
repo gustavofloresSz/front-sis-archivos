@@ -35,6 +35,29 @@
     } @else {
       <div class="permission-grid">
         @for (grupo of grupos; track grupo.recurso) {
+          @if (grupo.recurso === 'reporte_tramite') {
+            <!-- Reportes de trámites: interfaz comentada temporalmente.
+            Para volver a mostrarla, retirar este comentario HTML.
+            <section class="permission-card">
+              <div class="permission-card__header">
+                <span>{{ grupo.etiqueta }}</span>
+                <mat-checkbox
+                  [checked]="grupoCompleto(grupo)"
+                  (change)="seleccionarGrupo(grupo, $event.checked)"
+                  aria-label="Seleccionar todas las acciones del grupo"
+                >Todas</mat-checkbox>
+              </div>
+              <div class="permission-card__options">
+                @for (permiso of grupo.permisos; track permiso.accion) {
+                  <mat-checkbox
+                    [checked]="estaSeleccionado(permiso)"
+                    (change)="cambiarSeleccion(permiso, $event.checked)"
+                  >{{ etiquetaAccion(permiso) }}</mat-checkbox>
+                }
+              </div>
+            </section>
+            -->
+          } @else {
           <section class="permission-card">
             <div class="permission-card__header">
               <span>{{ grupo.etiqueta }}</span>
@@ -54,6 +77,7 @@
               }
             </div>
           </section>
+          }
         }
       </div>
     }

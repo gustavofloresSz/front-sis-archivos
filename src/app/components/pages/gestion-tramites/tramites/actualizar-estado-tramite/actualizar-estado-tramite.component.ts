@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -23,7 +22,6 @@ import {
     CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatCheckboxModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -43,8 +41,6 @@ export class ActualizarEstadoTramiteComponent implements OnInit {
   readonly form = this.fb.group({
     transicion: [null as TransicionEstadoTramite | null, Validators.required],
     motivo: ['', [Validators.required, Validators.minLength(5)]],
-    planoVerificado: [false],
-    rtaVerificada: [false],
   });
 
   transiciones: TransicionEstadoTramite[] = [];
@@ -53,19 +49,6 @@ export class ActualizarEstadoTramiteComponent implements OnInit {
   guardando = false;
   error: string | null = null;
   readonly formatosArchivosPermitidos = FORMATOS_ARCHIVOS_TRAMITE;
-
-  get requiereVerificacionDocumental(): boolean {
-    return this.form.controls.transicion.value?.estado.nombre
-      ?.trim()
-      .toLocaleLowerCase('es') === 'concluido';
-  }
-
-  get documentosRequeridosVerificados(): boolean {
-    return (
-      this.form.controls.planoVerificado.value === true &&
-      this.form.controls.rtaVerificada.value === true
-    );
-  }
 
   ngOnInit(): void {
     this.cargarTransiciones();
@@ -130,15 +113,6 @@ export class ActualizarEstadoTramiteComponent implements OnInit {
       return;
     }
 
-    if (
-      this.requiereVerificacionDocumental &&
-      !this.documentosRequeridosVerificados
-    ) {
-      this.error =
-        'Debe verificar el Plano y la Resolución Técnica Administrativa (RTA) para concluir el trámite.';
-      return;
-    }
-
     this.guardando = true;
     this.error = null;
 
@@ -148,12 +122,6 @@ export class ActualizarEstadoTramiteComponent implements OnInit {
         transicion,
         this.form.controls.motivo.value ?? '',
         this.archivos,
-        this.requiereVerificacionDocumental
-          ? {
-              PLANO: this.form.controls.planoVerificado.value === true,
-              RTA: this.form.controls.rtaVerificada.value === true,
-            }
-          : undefined,
       )
       .subscribe({
         next: (respuesta) => {

@@ -21,7 +21,6 @@ El proyecto fue generado con Angular CLI 19.0.4.
 ```text
 src/app/
 ├── auth/                         # Autenticación, sesión, guards y perfil
-├── consultas/                    # Interfaz de consulta asistida y grabación de audio
 ├── interceptors/                 # Inclusión del token en solicitudes HTTP
 ├── components/
 │   ├── pages/

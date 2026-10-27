@@ -5,7 +5,6 @@ import { isAuthenticatedGuard } from './auth/guards/is-authenticate-guard';
 import { permissionGuard } from './auth/guards/permission.guard';
 import { TramitesComponent } from './components/pages/gestion-tramites/tramites/tramites.component';
 import { UsuariosComponent } from './components/pages/usuarios/usuarios.component';
-import { ConsultaTramiteComponent } from './consultas/pages/consulta-tramite/consulta-tramite.component';
 import { TipoTramiteComponent } from './components/pages/gestion-tramites/catalogos/tipo-tramite/tipo-tramite.component';
 import { InstitucionComponent } from './components/pages/gestion-tramites/organizacion/institucion/institucion.component';
 import { ReporteTramitesComponent } from './components/pages/gestion-tramites/tramites/reportes/reporte-tramites/reporte-tramites.component';
@@ -87,10 +86,6 @@ export const routes: Routes = [
             }
         ]
     },
-    {
-        path:'consulta-tramites',component:ConsultaTramiteComponent
-    },
-
     {
         path:'login',component:LoginComponent
     },

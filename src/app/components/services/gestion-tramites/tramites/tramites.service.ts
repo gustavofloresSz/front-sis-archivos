@@ -34,11 +34,6 @@ export interface TransicionEstadoTramite {
   es_correccion_administrativa: boolean;
 }
 
-export interface DocumentosVerificados {
-  PLANO: boolean;
-  RTA: boolean;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -92,7 +87,6 @@ export class TramitesService {
       estado_nuevo_id: number;
       motivo: string;
       es_correccion_administrativa?: boolean;
-      documentos_verificados?: DocumentosVerificados;
     },
   ) {
     return this.http.patch<any>(
@@ -119,7 +113,6 @@ export class TramitesService {
     transicion: TransicionEstadoTramite,
     motivo: string,
     archivos: File[],
-    documentosVerificados?: DocumentosVerificados,
   ) {
     const formData = new FormData();
     formData.append('estado_nuevo_id', String(transicion.estado.id));
@@ -127,13 +120,6 @@ export class TramitesService {
 
     if (transicion.es_correccion_administrativa) {
       formData.append('es_correccion_administrativa', 'true');
-    }
-
-    if (documentosVerificados) {
-      formData.append(
-        'documentos_verificados',
-        JSON.stringify(documentosVerificados),
-      );
     }
 
     archivos.forEach((archivo) => formData.append('files', archivo));
