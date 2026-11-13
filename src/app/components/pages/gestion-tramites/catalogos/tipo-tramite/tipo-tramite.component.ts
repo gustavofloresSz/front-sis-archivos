@@ -50,7 +50,7 @@ export class TipoTramiteComponent implements OnInit {
   }
 
   get displayedColumns(): string[] {
-    const columnas = ['nro', 'nombre', 'segmento'];
+    const columnas = ['nro', 'nombre', 'segmento', 'estado'];
     return this.puedeEditar ? [...columnas, 'opciones'] : columnas;
   }
 

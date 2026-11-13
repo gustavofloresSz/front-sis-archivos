@@ -1,0 +1,17 @@
+<section class="apariencia-section">
+  <h2>Color de la interfaz</h2>
+  <p class="descripcion">Selecciona la presentación visual del sistema.</p>
+  <mat-radio-group aria-label="Apariencia del sistema" [value]="apariencia.actual()" (change)="seleccionar($event.value)">
+    <div class="apariencia-opcion" [class.seleccionada]="apariencia.actual() === 'claro'">
+      <div class="vista-previa claro" aria-hidden="true"><div class="vista-menu"></div><div class="vista-barra"></div><div class="vista-contenido"></div></div>
+      <mat-radio-button value="claro">Institucional claro (predeterminado)</mat-radio-button>
+      <p>Interfaz clara de estilo institucional.</p>
+    </div>
+    <div class="apariencia-opcion" [class.seleccionada]="apariencia.actual() === 'oscuro'">
+      <div class="vista-previa oscuro" aria-hidden="true"><div class="vista-menu"></div><div class="vista-barra"></div><div class="vista-contenido"></div></div>
+      <mat-radio-button value="oscuro">Oscuro (opcional)</mat-radio-button>
+      <p>Interfaz con tonos oscuros.</p>
+    </div>
+  </mat-radio-group>
+  <p class="mensaje" role="status">{{ mensaje }}</p>
+</section>

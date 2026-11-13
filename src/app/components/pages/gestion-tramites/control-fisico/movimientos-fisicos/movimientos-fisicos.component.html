@@ -5,13 +5,10 @@
       Movimientos físicos
     </h1>
 
-    <p class="m-0 mt-1 text-sm text-slate-500">
-      Registre retiros, devoluciones y traslados físicos de expedientes.
-    </p>
   </div>
 
   <div class="rounded-xl bg-white p-5 shadow-sm border border-slate-200">
-    <div class="mb-4 flex max-w-4xl flex-col gap-3 md:flex-row md:items-start">
+    <div class="mb-4 flex max-w-xl flex-col gap-3 md:flex-row md:items-start">
       <mat-form-field appearance="outline" class="w-full md:flex-1">
         <mat-label>Buscar trámite</mat-label>
 
@@ -145,7 +142,7 @@
                   matTooltip="Ver detalle físico"
                   type="button"
                   (click)="verDetalleFisico(tramite)"
-                >
+                 class="app-button-secondary">
                   <mat-icon>info</mat-icon>
                 </button>
                 }
@@ -196,7 +193,7 @@
           mat-stroked-button
           color="primary"
           type="button"
-          class="mb-4"
+          class="app-button-secondary mb-4"
           (click)="volverAResultados()"
         >
           <mat-icon>arrow_back</mat-icon>
@@ -212,7 +209,7 @@
             mat-stroked-button
             color="primary"
             type="button"
-            class="mb-4"
+            class="app-button-secondary mb-4"
             (click)="volverAResultados()"
           >
             <mat-icon>arrow_back</mat-icon>

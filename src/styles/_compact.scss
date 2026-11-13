@@ -1,0 +1,39 @@
+@use '@angular/material' as mat;
+
+/* Escala común para contenido, controles y paneles, sin modificar el zoom del navegador. */
+html { font-size: 13px; }
+body { font-size: 1rem; line-height: 1.5; }
+
+html .mat-mdc-form-field {
+  @include mat.form-field-overrides((
+    container-height: 44px,
+    container-vertical-padding: 10px,
+    container-text-size: 1rem,
+    container-text-line-height: 1.5rem,
+    outlined-label-text-size: 1rem,
+    outlined-label-text-populated-size: 1rem,
+    filled-label-text-size: 1rem,
+    subscript-text-size: .85rem,
+  ));
+}
+html .mat-mdc-select { @include mat.select-overrides((trigger-text-size: 1rem)); }
+html .mat-mdc-option { @include mat.option-overrides((label-text-size: 1rem)); }
+html .mat-mdc-tab-group { @include mat.tabs-overrides((label-text-size: 1rem, container-height: 40px)); }
+html .mat-mdc-table {
+  @include mat.table-overrides((header-container-height: 40px, row-item-container-height: 36px));
+}
+html .mat-mdc-header-cell, html .mat-mdc-cell { font-size: .925rem !important; }
+html .mat-mdc-paginator {
+  @include mat.paginator-overrides((container-size: 44px, container-text-size: .925rem, select-trigger-text-size: .925rem));
+}
+html .mat-mdc-dialog-container {
+  @include mat.dialog-overrides((subhead-size: 1.35rem, supporting-text-size: 1rem));
+}
+html .mat-mdc-button-base:not(.mat-mdc-icon-button):not(.mat-mdc-mini-fab):not(.mat-mdc-fab) {
+  font-size: 1rem;
+}
+
+/* Mantiene los controles cómodos de usar en pantallas táctiles. */
+@media (pointer: coarse) {
+  html .mat-mdc-form-field { @include mat.form-field-overrides((container-height: 48px, container-vertical-padding: 12px)); }
+}

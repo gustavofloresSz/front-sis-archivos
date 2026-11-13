@@ -14,6 +14,7 @@ import { ArchivosService } from '../../../../../../services/gestion-tramites/tra
 import { AuthService } from '../../../../../../../auth/services/auth.service';
 import {
   CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE,
+  acumularArchivosSeleccionados,
   esArchivoPdf,
   esArchivoTramitePermitido,
   FORMATOS_ARCHIVOS_TRAMITE,
@@ -44,8 +45,8 @@ export interface UbicacionPendiente {
     VisorArchivoComponent,
   ],
   template: `
-    <div [formGroup]="form()" class="pt-5">
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div [formGroup]="form()" class="archivo-ubicacion">
+      <div class="ubicacion-campos">
         <mat-form-field appearance="outline">
           <mat-label>Ambiente</mat-label>
           <mat-select [value]="ambienteFisicoId()" (selectionChange)="cambiarAmbiente($event.value)">
@@ -85,16 +86,16 @@ export interface UbicacionPendiente {
       </div>
 
       @if (errorUbicacion()) {
-        <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div class="ubicacion-estado rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {{ errorUbicacion() }}
         </div>
       } @else if (ubicacionActual()) {
-        <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        <div class="ubicacion-estado rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
           {{ esUbicacionInicial(ubicacionActual()) ? 'Ubicación actual' : 'Ubicación disponible' }}:
           {{ describirUbicacion(ubicacionActual()) }}
         </div>
       } @else if (ubicacionPendiente()) {
-        <div class="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+        <div class="ubicacion-estado rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
           La ubicación no existe todavía. Se creará al registrar el trámite:
           {{ describirUbicacionPendiente() }}
         </div>
@@ -102,15 +103,15 @@ export interface UbicacionPendiente {
 
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Observaciones</mat-label>
-        <textarea matInput rows="3" formControlName="observaciones"></textarea>
+        <textarea matInput rows="2" formControlName="observaciones"></textarea>
       </mat-form-field>
 
       @if (esEdicion()) {
-        <div class="mb-4 rounded-lg border border-gray-200 p-4">
+        <div class="archivos-asociados rounded-lg border border-gray-200 p-3">
           <h4 class="mb-3 font-semibold text-gray-700">Archivos asociados</h4>
 
           @if (archivosExistentes().length) {
-            <div class="space-y-2">
+            <div class="lista-archivos space-y-2">
               @for (archivo of archivosExistentes(); track archivo.id) {
                 <div
                   class="flex flex-wrap items-center justify-between gap-3 rounded bg-gray-50 px-3 py-2"
@@ -135,7 +136,7 @@ export interface UbicacionPendiente {
                       type="button"
                       [disabled]="archivoEstaRetirado(archivo.id)"
                       (click)="verArchivo(archivo)"
-                    >
+                     class="app-button-secondary">
                       <mat-icon>visibility</mat-icon>
                       Ver
                     </button>
@@ -151,7 +152,7 @@ export interface UbicacionPendiente {
                         type="button"
                         [disabled]="archivoEstaRetirado(archivo.id) || descargandoArchivoId() !== null"
                         (click)="descargarArchivo(archivo)"
-                      >
+                       class="app-button-secondary">
                         @if (descargandoArchivoId() === archivo.id) {
                           <mat-spinner diameter="20"></mat-spinner>
                         } @else {
@@ -199,8 +200,8 @@ export interface UbicacionPendiente {
       }
 
       @if (puedeAgregarArchivos()) {
-      <div class="rounded-lg border border-dashed border-gray-300 p-5 text-center">
-        <mat-icon class="!h-10 !w-10 !text-[40px] text-sky-700">upload_file</mat-icon>
+      <div class="carga-archivos rounded-lg border border-dashed border-gray-300 text-center">
+        <mat-icon class="upload-icon text-sky-700">upload_file</mat-icon>
         <p class="mt-2 text-sm text-gray-600">
           {{ esEdicion()
             ? 'Seleccione los nuevos archivos que desea agregar al trámite.'
@@ -220,7 +221,7 @@ export interface UbicacionPendiente {
         <button
           mat-flat-button
           color="primary"
-          class="mt-3"
+          class="app-button-primary"
           type="button"
           (click)="selectorArchivos.click()"
         >
@@ -259,6 +260,22 @@ export interface UbicacionPendiente {
       </div>
       }
     </div>
+  `,
+  styles: `
+    :host { display: block; }
+    .archivo-ubicacion { padding-top: 8px; }
+    .ubicacion-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; }
+    mat-form-field { min-width: 0; width: 100%; }
+    .ubicacion-estado, .archivos-asociados { margin-bottom: 12px; }
+    .carga-archivos { padding: 16px; }
+    .carga-archivos p { margin: 8px 0; }
+    .upload-icon { height: 40px; width: 40px; font-size: 40px; }
+    @media (min-width: 900px) {
+      .ubicacion-campos { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @media (max-width: 599px) {
+      .ubicacion-campos { grid-template-columns: 1fr; }
+    }
   `,
 })
 export class ArchivoUbicacionStepComponent {
@@ -448,6 +465,8 @@ export class ArchivoUbicacionStepComponent {
 
     const input = event.target as HTMLInputElement;
     const archivos = input.files ? Array.from(input.files) : [];
+    input.value = '';
+    if (!archivos.length) return;
 
     const archivoNoPermitido = archivos.find(
       (archivo) => !esArchivoTramitePermitido(archivo),
@@ -457,28 +476,24 @@ export class ArchivoUbicacionStepComponent {
       this.errorArchivo.set(
         'Formato no permitido. Use PDF, imágenes JPG, PNG o WEBP, Word o Excel.',
       );
-      this.archivos.set([]);
-      this.sincronizarArchivos();
-      input.value = '';
       return;
     }
 
-    if (archivos.length > CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE) {
+    const acumulados = acumularArchivosSeleccionados(this.archivos(), archivos);
+    if (acumulados.length > CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE) {
       this.errorArchivo.set(
         `Puede agregar como máximo ${CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE} archivos por operación.`,
       );
-      this.archivos.set([]);
-      this.sincronizarArchivos();
-      input.value = '';
       return;
     }
 
     this.errorArchivo.set(null);
-    this.archivos.set(archivos);
+    this.archivos.set(acumulados);
     this.sincronizarArchivos();
   }
 
   quitarArchivo(index: number) {
+    this.errorArchivo.set(null);
     const archivos = this.archivos().filter((_, indice) => indice !== index);
 
     this.archivos.set(archivos);

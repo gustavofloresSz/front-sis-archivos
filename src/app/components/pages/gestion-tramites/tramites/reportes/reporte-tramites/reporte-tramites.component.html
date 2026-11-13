@@ -2,25 +2,22 @@
   @if (modoVista === 'busqueda') {
     <div class="mb-6">
       <h1 class="m-0 text-2xl font-bold text-gray-800">
-        Reporte de trámites
+        Reporte trámites
       </h1>
-      <p class="m-0 mt-1 text-sm text-gray-500">
-        Busque un trámite para consultar su información completa.
-      </p>
     </div>
   }
 
   @if (modoVista === 'busqueda') {
     <mat-card class="search-card !border-0 !bg-transparent !shadow-none">
       <mat-card-content class="search-card-content !p-0">
-        <div class="mb-4 flex max-w-5xl items-center gap-2">
-          <div class="flex min-w-0 max-w-3xl flex-1 items-center gap-2">
+        <div class="mb-2 flex flex-wrap items-center gap-2">
+          <div class="flex min-w-0 max-w-xl flex-[1_1_20rem] items-center gap-2">
           <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-0 flex-1">
-            <mat-label>Buscar trámite</mat-label>
+            <mat-label>{{ filtroActual.criterio === 'todos' ? 'Buscar trámite' : filtroActual.etiqueta }}</mat-label>
             <input
               matInput
               [formControl]="searchControl"
-              placeholder="Código de trámite, solicitante, gestión o código catastral"
+              [placeholder]="filtroActual.placeholder"
             >
 
             <mat-icon matPrefix>search</mat-icon>
@@ -55,13 +52,55 @@
             mat-stroked-button
             color="primary"
             type="button"
-            class="summary-flow-button shrink-0"
-            (click)="verResumenFlujo()"
+            class="app-button-secondary shrink-0"
+            (click)="abrirFiltros()"
+            aria-label="Elegir filtro de búsqueda"
           >
-            <mat-icon>account_tree</mat-icon>
-            Resumen del flujo
+            <mat-icon>filter_list</mat-icon>
+            Filtros
           </button>
         </div>
+
+        @if (criterio === 'institucion') {
+          <div class="mb-3 flex flex-wrap items-start gap-3">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full min-w-0 sm:w-72">
+              <mat-label>Elegir institución</mat-label>
+              <mat-select [formControl]="institucionControl" [disabled]="cargandoInstituciones">
+                <mat-option [value]="null">Todas las instituciones</mat-option>
+                @for (institucion of instituciones; track institucion.id) {
+                  <mat-option [value]="institucion.id">{{ institucion.sigla }} — {{ institucion.nombre }}</mat-option>
+                }
+              </mat-select>
+              @if (cargandoInstituciones) { <mat-hint>Cargando instituciones...</mat-hint> }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full min-w-0 sm:w-72">
+              <mat-label>Fecha de registro</mat-label>
+              <mat-date-range-input [formGroup]="fechas" [rangePicker]="calendario">
+                <input matStartDate formControlName="desde" placeholder="Desde" aria-label="Fecha de registro desde">
+                <input matEndDate formControlName="hasta" placeholder="Hasta" aria-label="Fecha de registro hasta">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matIconSuffix [for]="calendario"></mat-datepicker-toggle>
+              <mat-date-range-picker #calendario></mat-date-range-picker>
+              @if (!fechas.controls.desde.value && !fechas.controls.hasta.value) {
+                <mat-hint>Todas las fechas</mat-hint>
+              }
+              <mat-error>Ingrese un rango de fechas válido.</mat-error>
+            </mat-form-field>
+
+            @if (fechas.controls.desde.value || fechas.controls.hasta.value) {
+              <button mat-stroked-button type="button" (click)="limpiarFechas()" class="app-button-secondary">Todas las fechas</button>
+            }
+          </div>
+          @if (errorInstituciones) {
+            <p class="m-0 mb-3 text-sm text-red-700">
+              {{ errorInstituciones }}
+              <button mat-button type="button" (click)="cargarInstituciones()" class="app-button-secondary">Reintentar</button>
+            </p>
+          }
+        }
+
+        <p class="m-0 mb-4 text-sm text-slate-600">Buscar por: <strong>{{ filtroActual.etiqueta }}</strong></p>
 
         @if (errorTabla) {
           <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -78,7 +117,7 @@
               Realice una búsqueda
             </h3>
             <p class="m-0 mt-1 text-sm text-gray-500">
-              Ingrese el código del trámite, nombre del solicitante, gestión o código catastral para mostrar resultados.
+              Ingrese una búsqueda o seleccione una institución y, si lo necesita, un rango de fechas.
             </p>
           </div>
         } @else {
@@ -108,6 +147,14 @@
                   <th mat-header-cell *matHeaderCellDef>Solicitante</th>
                   <td mat-cell *matCellDef="let tramite">
                     {{ tramite.nombres_apellidos || '—' }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="institucion">
+                  <th mat-header-cell *matHeaderCellDef>Institución</th>
+                  <td mat-cell *matCellDef="let tramite">
+                    {{ tramite.usuario_registro?.institucion?.sigla || '—' }}
+                    <span class="block text-xs text-slate-500">{{ tramite.usuario_registro?.institucion?.nombre }}</span>
                   </td>
                 </ng-container>
 
@@ -191,7 +238,7 @@
                 mat-stroked-button
                 color="primary"
                 type="button"
-                class="mb-4"
+                class="app-button-secondary mb-4"
                 (click)="volverAResultados()"
               >
                 <mat-icon>arrow_back</mat-icon>
@@ -207,51 +254,41 @@
             </div>
           </div>
 
-          @if (modoDetalleSimple) {
-            <mat-tab-group animationDuration="200ms">
-              <mat-tab label="Información del trámite">
-                <div class="pt-5">
-                  <app-detalle-reporte-tramite
-                    [tramite]="tramiteSeleccionado"
-                    [mostrarArchivos]="false"
-                  ></app-detalle-reporte-tramite>
-                </div>
-              </mat-tab>
-
-              <mat-tab label="Archivos">
-                <app-sello-documento
+          <mat-tab-group animationDuration="200ms">
+            <mat-tab label="Información del trámite">
+              <div class="pt-5">
+                <app-detalle-reporte-tramite
                   [tramite]="tramiteSeleccionado"
-                ></app-sello-documento>
-              </mat-tab>
-            </mat-tab-group>
-          } @else {
-            <mat-tab-group animationDuration="200ms">
-              <mat-tab label="Información del trámite">
-                <div class="pt-5">
-                  <app-detalle-reporte-tramite
-                    [tramite]="tramiteSeleccionado"
-                  ></app-detalle-reporte-tramite>
-                </div>
-              </mat-tab>
+                  [mostrarArchivos]="false"
+                  [mostrarUbicacion]="false"
+                  [consultaReporte]="true"
+                ></app-detalle-reporte-tramite>
+              </div>
+            </mat-tab>
 
-              <mat-tab label="Flujo gráfico">
-                <div class="pt-5">
-                  <app-workflow-reporte-tramite
-                    [tramite]="tramiteSeleccionado"
-                  ></app-workflow-reporte-tramite>
-                </div>
-              </mat-tab>
+            <mat-tab label="Archivos">
+              <app-sello-documento
+                [tramite]="tramiteSeleccionado"
+                [consultaReporte]="true"
+              ></app-sello-documento>
+            </mat-tab>
 
-              <mat-tab label="Reporte del trámite">
-                <ng-template matTabContent>
-                  <app-reporte-tramite
-                    [tramiteId]="tramiteSeleccionado.id"
-                    [codigoTramite]="tramiteSeleccionado.codigo_tramite"
-                  ></app-reporte-tramite>
-                </ng-template>
-              </mat-tab>
-            </mat-tab-group>
-          }
+            <mat-tab label="Información física">
+              <div class="pt-5">
+                <app-detalle-fisico
+                  [tramite]="tramiteSeleccionado"
+                  [historial]="tramiteSeleccionado.historial_fisico ?? []"
+                ></app-detalle-fisico>
+              </div>
+            </mat-tab>
+
+            <mat-tab label="Flujo de trabajo">
+              <div class="pt-5">
+                <app-historial-estados-tramite [tramite]="tramiteSeleccionado"></app-historial-estados-tramite>
+              </div>
+            </mat-tab>
+
+          </mat-tab-group>
         </mat-card-content>
       </mat-card>
     }

@@ -117,7 +117,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="cancelar()">
+  <button mat-button type="button" (click)="cancelar()" class="app-button-secondary">
     Cancelar
   </button>
 
@@ -127,7 +127,7 @@
     type="button"
     [disabled]="guardando"
     (click)="guardar()"
-  >
+   class="app-button-primary">
     {{ guardando ? 'Guardando...' : 'Registrar movimiento' }}
   </button>
 </mat-dialog-actions>

@@ -15,4 +15,5 @@ export class DetalleReporteTramiteComponent {
   @Input() tramite: any | null = null;
   @Input() mostrarArchivos = true;
   @Input() mostrarUbicacion = true;
+  @Input() consultaReporte = false;
 }

@@ -33,6 +33,7 @@ export class TramiteDetalleComponent {
   @Input() tramite: any | null = null;
   @Input() mostrarArchivos = true;
   @Input() mostrarUbicacion = true;
+  @Input() consultaReporte = false;
 
   cargandoPdf = false;
   errorPdf: string | null = null;
@@ -89,7 +90,7 @@ export class TramiteDetalleComponent {
     this.errorPdf = null;
     this.archivoEnVista = archivo;
 
-    this.pdfSubscription = this.archivosService.verArchivo(archivo.id)
+    this.pdfSubscription = this.archivosService.verArchivo(archivo.id, this.consultaReporte ? this.tramite.id : undefined)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob) => {

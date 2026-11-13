@@ -24,7 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 
     <mat-dialog-actions align="end">
       @if (data?.tipo === 'confirmacion') {
-        <button mat-button (click)="cancelar()">
+        <button mat-button (click)="cancelar()" class="app-button-secondary">
           Cancelar
         </button>
 
@@ -33,7 +33,7 @@ import { MatIconModule } from '@angular/material/icon';
         </button>
 
       } @else {
-        <button mat-flat-button color="primary" mat-dialog-close>
+        <button mat-flat-button color="primary" mat-dialog-close class="app-button-primary">
           Aceptar
         </button>
       }

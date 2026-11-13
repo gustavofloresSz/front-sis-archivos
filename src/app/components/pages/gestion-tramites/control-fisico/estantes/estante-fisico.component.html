@@ -1,10 +1,10 @@
-<div class="flex h-[calc(100vh-150px)] flex-col p-4">
+<div class="flex h-[calc(100vh-130px)] flex-col p-4">
   <div class="mb-4">
       <h2 class="m-0 text-2xl font-bold">Estantes físicos</h2>
   </div>
 
   <div class="mb-4 flex items-center justify-between gap-4">
-  <form class="flex min-w-0 max-w-3xl flex-1 items-center gap-2" (ngSubmit)="buscar()">
+  <form class="flex min-w-0 max-w-md flex-1 items-center gap-2" (ngSubmit)="buscar()">
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-0 flex-1">
       <mat-label>Buscar estante</mat-label>
       <input matInput name="busqueda" [(ngModel)]="busqueda" (ngModelChange)="buscarAlEscribir($event)" placeholder="Código, ambiente o institución">
@@ -15,7 +15,7 @@
     <button mat-mini-fab color="primary" type="submit" aria-label="Buscar estante" matTooltip="Buscar"><mat-icon>search</mat-icon></button>
   </form>
     @if (puedeCrear) {
-      <button mat-mini-fab color="primary" type="button" aria-label="Agregar estante físico" matTooltip="Agregar estante físico" (click)="agregar()"><mat-icon>add</mat-icon></button>
+      <button mat-mini-fab color="primary" type="button" aria-label="Agregar estante físico" matTooltip="Agregar estante físico" (click)="agregar()" class="app-button-primary"><mat-icon>add</mat-icon></button>
     }
   </div>
 

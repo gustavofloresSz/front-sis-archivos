@@ -1,11 +1,11 @@
-<div class="p-4 h-[calc(100vh-150px)] flex flex-col">
+<div class="p-4 h-[calc(100vh-130px)] flex flex-col">
 
   <div class="mb-4">
     <h2 class="text-2xl font-bold">Administración de Instituciones</h2>
   </div>
 
   <div class="mb-4 flex items-center justify-between gap-4">
-  <form class="flex min-w-0 max-w-3xl flex-1 items-center gap-2" (ngSubmit)="buscar()">
+  <form class="flex min-w-0 max-w-md flex-1 items-center gap-2" (ngSubmit)="buscar()">
     <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-0 flex-1">
       <mat-label>Buscar institución</mat-label>
       <input matInput name="busqueda" [(ngModel)]="busqueda" (ngModelChange)="buscarAlEscribir($event)" placeholder="Nombre o sigla">
@@ -16,7 +16,7 @@
     <button mat-mini-fab color="primary" type="submit" aria-label="Buscar institución"><mat-icon>search</mat-icon></button>
   </form>
     @if (puedeCrear) {
-      <button mat-mini-fab color="primary" type="button" aria-label="Agregar institución" title="Agregar institución" (click)="agregarInstitucion()"><mat-icon>add</mat-icon></button>
+      <button mat-mini-fab color="primary" type="button" aria-label="Agregar institución" title="Agregar institución" (click)="agregarInstitucion()" class="app-button-primary"><mat-icon>add</mat-icon></button>
     }
   </div>
 

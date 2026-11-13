@@ -2,64 +2,36 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment.development';
 
-export interface ResumenWorkflowTramites {
-  alcance: {
-    tipo: 'institucion' | 'global';
-    institucion_id: number | null;
-    institucion_nombre: string | null;
-  };
-  indicadores: {
-    total: number;
-  };
-  estados: Array<{
-    nombre: string;
-    cantidad: number;
-    porcentaje: number;
-    es_final: boolean;
-  }>;
-  transiciones: Array<{
-    origen: string;
-    destino: string;
-    cantidad: number;
-  }>;
+export type CriterioReporte = 'todos' | 'solicitante' | 'institucion';
+
+export interface InstitucionReporte { id: number; nombre: string; sigla: string; }
+export interface FiltrosInstitucionReporte {
+  institucion_id?: number;
+  fecha_desde?: string;
+  fecha_hasta?: string;
 }
 
-export interface FiltrosResumenWorkflow {
-  fechaDesde?: string;
-  fechaHasta?: string;
-  tipoTramiteId?: number;
-}
-
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class ReportesService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  obtenerReporteTramite(tramiteId: number) {
-    return this.http.get(
-      `${this.apiUrl}/reportes/tramites/${tramiteId}/pdf`,
-      { responseType: 'blob' },
+  buscarTramites(page: number, limit: number, search: string, criterio: CriterioReporte, filtros: FiltrosInstitucionReporte = {}) {
+    let params = new HttpParams().set('page', page).set('limit', limit)
+      .set('search', search).set('criterio', criterio);
+    if (filtros.institucion_id) params = params.set('institucion_id', filtros.institucion_id);
+    if (filtros.fecha_desde) params = params.set('fecha_desde', filtros.fecha_desde);
+    if (filtros.fecha_hasta) params = params.set('fecha_hasta', filtros.fecha_hasta);
+    return this.http.get<{ data: any[]; meta: { total: number } }>(
+      `${this.apiUrl}/reportes/tramites`, { params },
     );
   }
 
-  obtenerResumenWorkflow(filtros: FiltrosResumenWorkflow = {}) {
-    let params = new HttpParams();
+  obtenerTramite(tramiteId: number) {
+    return this.http.get<any>(`${this.apiUrl}/reportes/tramites/${tramiteId}`);
+  }
 
-    if (filtros.fechaDesde) {
-      params = params.set('fecha_desde', filtros.fechaDesde);
-    }
-    if (filtros.fechaHasta) {
-      params = params.set('fecha_hasta', filtros.fechaHasta);
-    }
-    if (filtros.tipoTramiteId) {
-      params = params.set('tipo_tramite_id', filtros.tipoTramiteId);
-    }
-
-    return this.http.get<ResumenWorkflowTramites>(
-      `${this.apiUrl}/reportes/tramites/resumen-workflow`,
-      { params },
-    );
+  obtenerInstituciones() {
+    return this.http.get<InstitucionReporte[]>(`${this.apiUrl}/reportes/instituciones`);
   }
 }

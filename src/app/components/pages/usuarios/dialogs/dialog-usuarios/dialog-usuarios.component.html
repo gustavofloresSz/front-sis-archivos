@@ -91,11 +91,11 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end" class="gap-2 px-6 pb-4">
-    <button mat-button type="button" (click)="cancelar()" [disabled]="guardando">
+    <button mat-button type="button" (click)="cancelar()" [disabled]="guardando" class="app-button-secondary">
       Cancelar
     </button>
 
-    <button mat-flat-button color="primary" type="submit" [disabled]="guardando">
+    <button mat-flat-button color="primary" type="submit" [disabled]="guardando" class="app-button-primary">
       <mat-icon>{{ guardando ? 'hourglass_empty' : 'save' }}</mat-icon>
       {{ guardando ? 'Guardando...' : esEdicion ? 'Actualizar' : 'Guardar' }}
     </button>

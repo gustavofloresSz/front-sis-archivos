@@ -3,6 +3,9 @@
 # Compiled output
 /dist
 /tmp
+/.tmp/
+/.temp/
+/.backups/
 /out-tsc
 /bazel-out
 
@@ -12,6 +15,9 @@ npm-debug.log
 yarn-error.log
 
 /src/environments/environment.ts
+.env
+.env.*
+!.env.example
 
 # IDEs and editors
 .idea/

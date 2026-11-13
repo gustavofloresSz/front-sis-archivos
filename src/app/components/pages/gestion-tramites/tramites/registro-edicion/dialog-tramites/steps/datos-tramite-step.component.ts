@@ -22,8 +22,9 @@ import { MatSelectModule } from '@angular/material/select';
     { provide: MAT_DATE_LOCALE, useValue: 'es' },
   ],
   template: `
-    <div [formGroup]="form()" class="grid grid-cols-1 gap-4 pt-5 md:grid-cols-2 lg:grid-cols-3">
+    <div [formGroup]="form()" class="datos-tramite-grid">
       @if (esEdicion()) {
+        <div class="identificadores-edicion">
         <mat-form-field appearance="outline">
           <mat-label>Código del trámite</mat-label>
           <input matInput formControlName="codigo_tramite" readonly>
@@ -33,6 +34,7 @@ import { MatSelectModule } from '@angular/material/select';
           <mat-label>Número de folder</mat-label>
           <input matInput formControlName="num_folder" readonly>
         </mat-form-field>
+        </div>
       }
 
       <mat-form-field appearance="outline">
@@ -41,7 +43,6 @@ import { MatSelectModule } from '@angular/material/select';
         <mat-error>Ingrese un número de trámite mayor a cero</mat-error>
       </mat-form-field>
 
-      @if (!esEdicion()) {
         <mat-form-field appearance="outline">
           <mat-label>Gestión</mat-label>
           <mat-select formControlName="gestion" required>
@@ -52,7 +53,6 @@ import { MatSelectModule } from '@angular/material/select';
           <mat-error>La gestión es requerida</mat-error>
         </mat-form-field>
 
-      }
 
       <mat-form-field appearance="outline">
         <mat-label>Zona</mat-label>
@@ -65,19 +65,29 @@ import { MatSelectModule } from '@angular/material/select';
       </mat-form-field>
 
       <mat-form-field appearance="outline">
+        <mat-label>Código catastral</mat-label>
+        <input matInput formControlName="codigo_catastral">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
         <mat-label>Matrícula</mat-label>
         <input matInput formControlName="matricula">
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="md:col-span-2">
+      <mat-form-field appearance="outline" class="solicitante">
         <mat-label>Nombres y apellidos</mat-label>
         <input matInput formControlName="nombres_apellidos" required>
         <mat-error>El solicitante es requerido</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Código catastral</mat-label>
-        <input matInput formControlName="codigo_catastral">
+        <mat-label>Resolución complementaria/aclaratoria</mat-label>
+        <input matInput formControlName="resolucion_complementaria_aclaratoria">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Resolución municipal</mat-label>
+        <input matInput formControlName="resolucion_municipal">
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -90,11 +100,6 @@ import { MatSelectModule } from '@angular/material/select';
         >
         <mat-datepicker-toggle matIconSuffix [for]="pickerFechaResolucion"></mat-datepicker-toggle>
         <mat-datepicker #pickerFechaResolucion></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Resolución municipal</mat-label>
-        <input matInput formControlName="resolucion_municipal">
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -112,16 +117,22 @@ import { MatSelectModule } from '@angular/material/select';
         <mat-datepicker #pickerFechaResolucionComplementaria></mat-datepicker>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="lg:col-span-2">
-        <mat-label>Resolución complementaria/aclaratoria</mat-label>
-        <input matInput formControlName="resolucion_complementaria_aclaratoria">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="md:col-span-2 lg:col-span-3">
+      <mat-form-field appearance="outline" class="descripcion">
         <mat-label>Descripción</mat-label>
-        <textarea matInput rows="3" formControlName="descripcion"></textarea>
+        <textarea matInput rows="2" formControlName="descripcion"></textarea>
       </mat-form-field>
     </div>
+  `,
+  styles: `
+    :host { display: block; }
+    .datos-tramite-grid { display: grid; grid-template-columns: 1fr; gap: 8px 14px; padding-top: 8px; }
+    mat-form-field { min-width: 0; width: 100%; }
+    .identificadores-edicion { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .descripcion { grid-column: 1 / -1; }
+    @media (min-width: 700px) {
+      .datos-tramite-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .solicitante { grid-column: span 2; }
+    }
   `,
 })
 export class DatosTramiteStepComponent {

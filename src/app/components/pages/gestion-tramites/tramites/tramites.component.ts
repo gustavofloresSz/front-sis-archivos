@@ -18,7 +18,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { DetalleReporteTramiteComponent } from './reportes/detalle-reporte-tramite/detalle-reporte-tramite.component';
 import { SelloDocumentoComponent } from './detalle/sello-documento/sello-documento.component';
-import { WorkflowReporteTramiteComponent } from './reportes/workflow-reporte-tramite/workflow-reporte-tramite.component';
 import { HistorialEstadosTramiteComponent } from './detalle/historial-estados-tramite/historial-estados-tramite.component';
 import { DetalleFisicoComponent } from '../control-fisico/shared/detalle-fisico/detalle-fisico.component';
 import { MovimientoFisicoService } from '../../../services/gestion-tramites/control-fisico/movimiento-fisico.service';
@@ -27,6 +26,7 @@ import { AuthService } from '../../../../auth/services/auth.service';
 import { obtenerClasesEstadoTramite } from './shared/estado-tramite-presentacion';
 import { UbicacionFisicaService } from '../../../services/gestion-tramites/control-fisico/ubicacion-fisica.service';
 import { DialogMovimientoFisicoComponent } from '../control-fisico/dialogs/dialog-movimiento-fisico/dialog-movimiento-fisico.component';
+import { claseEstadoFisicoActual, textoEstadoFisico } from '../control-fisico/shared/movimiento-fisico-presentacion';
 
 type ModoVistaTramites = 'lista' | 'detalle' | 'actualizarEstado';
 
@@ -48,7 +48,6 @@ type ModoVistaTramites = 'lista' | 'detalle' | 'actualizarEstado';
     MatTabsModule,
     DetalleReporteTramiteComponent,
     SelloDocumentoComponent,
-    WorkflowReporteTramiteComponent,
     HistorialEstadosTramiteComponent,
     DetalleFisicoComponent,
     ActualizarEstadoTramiteComponent,
@@ -93,6 +92,7 @@ export class TramitesComponent implements OnInit {
     'tipo_tramite',
     'clasificacion_tramite',
     'estado_actual',
+    'estado_fisico',
     'distrito',
     'zona',
     'codigo_catastral',
@@ -147,6 +147,17 @@ export class TramitesComponent implements OnInit {
 
   clasesEstado(nombre: unknown): string {
     return obtenerClasesEstadoTramite(nombre);
+  }
+
+  textoEstadoUbicacion(tramite: any): string {
+    return tramite.estado_fisico === 'EN_ARCHIVO' ? 'Asignado' : textoEstadoFisico(tramite);
+  }
+
+  clasesEstadoUbicacion(tramite: any): string {
+    const estado = this.textoEstadoUbicacion(tramite);
+    return estado === 'Sin datos'
+      ? 'border-gray-200 bg-gray-50 text-gray-700'
+      : claseEstadoFisicoActual(estado);
   }
 
   ngOnInit(): void {

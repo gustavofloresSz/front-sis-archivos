@@ -113,6 +113,21 @@ import { buscarElementoPorId } from '../../shared/seleccion-catalogo.utils';
           <dd>{{ clasificacionSeleccionada()?.nombre || 'Sin selección' }}</dd>
         </div>
 
+        @if (esUrbanizacion()) {
+          <div>
+            <dt class="text-xs font-semibold uppercase text-gray-500">Manzano</dt>
+            <dd>{{ valor(clasificacionForm(), 'manzano') || 'Sin dato' }}</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-semibold uppercase text-gray-500">Lote</dt>
+            <dd>{{ valor(clasificacionForm(), 'lote') || 'Sin dato' }}</dd>
+          </div>
+          <div>
+            <dt class="text-xs font-semibold uppercase text-gray-500">Superficie</dt>
+            <dd>{{ formatearSuperficie('superficie', clasificacionForm()) }}</dd>
+          </div>
+        }
+
         <div>
           <dt class="text-xs font-semibold uppercase text-gray-500">
             {{ esEdicion() ? 'Estado actual' : 'Estado posterior al registro' }}
@@ -223,13 +238,14 @@ export class ConfirmacionStepComponent {
   archivosExistentes = input<any[]>([]);
   archivosRetiradosIds = input<number[]>([]);
   esEdicion = input(false);
+  esUrbanizacion = input(false);
 
   valor(form: FormGroup, campo: string) {
     return form.get(campo)?.value;
   }
 
-  formatearSuperficie(campo: string): string {
-    const valor = this.valor(this.superficiesForm(), campo);
+  formatearSuperficie(campo: string, form = this.superficiesForm()): string {
+    const valor = this.valor(form, campo);
 
     if (valor === null || valor === undefined || valor === '') {
       return 'Sin dato';

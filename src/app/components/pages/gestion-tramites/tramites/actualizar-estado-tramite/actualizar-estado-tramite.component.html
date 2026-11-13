@@ -1,6 +1,6 @@
 <div class="space-y-5">
   <div class="flex flex-wrap items-center justify-between gap-3">
-    <button mat-stroked-button color="primary" type="button" (click)="cancelar.emit()">
+    <button mat-stroked-button color="primary" type="button" (click)="cancelar.emit()" class="app-button-secondary">
       <mat-icon>arrow_back</mat-icon>
       Volver al detalle
     </button>
@@ -81,7 +81,7 @@
               <p class="m-0 text-sm font-semibold text-slate-800">Documentación adicional</p>
               <p class="m-0 mt-1 text-xs text-slate-500">Opcional. Adjunte archivos PDF, imágenes, Word o Excel.</p>
             </div>
-            <button mat-stroked-button color="primary" type="button" (click)="selectorArchivos.click()">
+            <button mat-stroked-button color="primary" type="button" (click)="selectorArchivos.click()" class="app-button-secondary">
               <mat-icon>attach_file</mat-icon>
               Seleccionar archivos
             </button>
@@ -116,13 +116,13 @@
       }
 
       <div class="mt-5 flex justify-end gap-3 border-t border-slate-200 pt-4">
-        <button mat-button type="button" [disabled]="guardando" (click)="cancelar.emit()">Cancelar</button>
+        <button mat-button type="button" [disabled]="guardando" (click)="cancelar.emit()" class="app-button-secondary">Cancelar</button>
         <button
           mat-flat-button
           color="primary"
           type="submit"
           [disabled]="guardando || cargando || !transiciones.length"
-        >
+         class="app-button-primary">
           @if (guardando) { <mat-spinner diameter="20"></mat-spinner> } @else { <mat-icon>published_with_changes</mat-icon> }
           {{ guardando ? 'Actualizando...' : 'Registrar actualización' }}
         </button>

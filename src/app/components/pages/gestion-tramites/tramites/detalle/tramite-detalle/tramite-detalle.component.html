@@ -1,13 +1,13 @@
 @if (tramite) {
-  <div class="space-y-5">
-    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <h3 class="mb-4 flex items-center gap-2 text-base font-semibold text-gray-800">
-        <mat-icon class="text-indigo-600">description</mat-icon>
+  <div class="detalle-tramite">
+    <section class="detalle-bloque">
+      <h3 class="detalle-encabezado">
+        <mat-icon aria-hidden="true">description</mat-icon>
         Datos generales
       </h3>
 
       <dl class="detalle-grid">
-        <div>
+        <div class="detalle-fila-amplia">
           <dt>Código</dt>
           <dd>{{ tramite?.codigo_tramite || '—' }}</dd>
         </div>
@@ -27,7 +27,7 @@
           <dd>{{ tramite?.gestion ?? '—' }}</dd>
         </div>
 
-        <div>
+        <div class="detalle-fila-amplia">
           <dt>Solicitante</dt>
           <dd>{{ tramite?.nombres_apellidos || '—' }}</dd>
         </div>
@@ -43,11 +43,21 @@
         </div>
 
         <div>
+          <dt>Distrito</dt>
+          <dd>{{ tramite?.distrito ?? '—' }}</dd>
+        </div>
+
+        <div>
+          <dt>Institución</dt>
+          <dd>{{ tramite?.usuario_registro?.institucion?.nombre || '—' }}</dd>
+        </div>
+
+        <div>
           <dt>Código catastral</dt>
           <dd>{{ tramite?.codigo_catastral || '—' }}</dd>
         </div>
 
-        <div class="md:col-span-2 lg:col-span-3">
+        <div class="detalle-fila-amplia">
           <dt>Descripción</dt>
           <dd class="whitespace-pre-wrap">
             {{ tramite?.descripcion || 'Sin descripción' }}
@@ -55,14 +65,14 @@
         </div>
       </dl>
     </section>
-    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <h3 class="mb-4 flex items-center gap-2 text-base font-semibold text-gray-800">
-        <mat-icon class="text-indigo-600">category</mat-icon>
+    <section class="detalle-bloque">
+      <h3 class="detalle-encabezado">
+        <mat-icon aria-hidden="true">category</mat-icon>
         Clasificación y resolución
       </h3>
 
       <dl class="detalle-grid">
-        <div>
+        <div class="detalle-fila-amplia">
           <dt>Tipo de trámite</dt>
           <dd>{{ tramite?.tipo_tramite?.nombre || '—' }}</dd>
         </div>
@@ -123,9 +133,9 @@
       </dl>
     </section>
 
-    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <h3 class="mb-4 flex items-center gap-2 text-base font-semibold text-gray-800">
-        <mat-icon class="text-indigo-600">square_foot</mat-icon>
+    <section class="detalle-bloque">
+      <h3 class="detalle-encabezado">
+        <mat-icon aria-hidden="true">square_foot</mat-icon>
         Superficies
       </h3>
 
@@ -157,21 +167,21 @@
       </dl>
     </section>
 
-    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <h3 class="mb-4 flex items-center gap-2 text-base font-semibold text-gray-800">
-        <mat-icon class="text-indigo-600">inventory_2</mat-icon>
+    <section class="detalle-bloque">
+      <h3 class="detalle-encabezado">
+        <mat-icon aria-hidden="true">inventory_2</mat-icon>
         {{ mostrarUbicacion ? 'Ubicación y observaciones' : 'Observaciones' }}
       </h3>
 
       <dl class="detalle-grid">
         @if (mostrarUbicacion) {
-        <div class="md:col-span-2 lg:col-span-3">
+        <div class="detalle-fila-amplia">
           <dt>Ubicación física</dt>
           <dd>{{ describirUbicacion(tramite?.ubicacion_fisica) }}</dd>
         </div>
         }
 
-        <div class="md:col-span-2 lg:col-span-3">
+        <div class="detalle-fila-amplia">
           <dt>Observaciones</dt>
           <dd class="whitespace-pre-wrap">
             {{ tramite?.observaciones || 'Sin observaciones' }}
@@ -180,16 +190,16 @@
       </dl>
     </section>
 
-    <section class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <h3 class="mb-4 flex items-center gap-2 text-base font-semibold text-gray-800">
-        <mat-icon class="text-indigo-600">payments</mat-icon>
+    <section class="detalle-bloque">
+      <h3 class="detalle-encabezado">
+        <mat-icon aria-hidden="true">payments</mat-icon>
         Comprobantes de pago
       </h3>
 
       @if (comprobantes.length) {
-        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <div class="detalle-cuerpo grid grid-cols-1 gap-3 md:grid-cols-2">
           @for (comprobante of comprobantes; track comprobante.id ?? $index) {
-            <dl class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <dl class="detalle-grid detalle-comprobante">
               <div>
                 <dt>Número</dt>
                 <dd>{{ comprobante.numero_comprobante || comprobante.numero || '—' }}</dd>
@@ -200,7 +210,7 @@
                 <dd>{{ comprobante.monto_comprobante ?? comprobante.monto ?? '—' }}</dd>
               </div>
 
-              <div>
+              <div class="detalle-fila-amplia">
                 <dt>Concepto</dt>
                 <dd>{{ comprobante.concepto_comprobante || comprobante.concepto || '—' }}</dd>
               </div>
@@ -208,7 +218,7 @@
           }
         </div>
       } @else {
-        <p class="text-sm text-gray-500">
+        <p class="detalle-cuerpo text-sm text-gray-500">
           No existen comprobantes registrados.
         </p>
       }
@@ -233,6 +243,9 @@
                     {{ nombreArchivo(archivo) }}
                   </p>
 
+                  @if (archivo.codigo) {
+                    <p class="m-0 mt-1 break-all text-xs text-slate-600">Código: {{ archivo.codigo }}</p>
+                  }
                   @if (archivo?.fecha_registro) {
                     <p class="m-0 mt-1 text-xs text-gray-500">
                       Registrado el {{ archivo.fecha_registro | date:'dd/MM/yyyy HH:mm' }}
@@ -247,7 +260,7 @@
                 color="primary"
                 type="button"
                 (click)="verPdf(archivo)"
-              >
+               class="app-button-secondary">
                 <mat-icon>visibility</mat-icon>
                 Ver PDF
               </button>

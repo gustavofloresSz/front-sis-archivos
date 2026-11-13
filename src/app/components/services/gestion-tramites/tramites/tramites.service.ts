@@ -8,6 +8,9 @@ export interface UpdateTramitePayload {
   descripcion?: string;
   zona?: string;
   distrito?: string;
+  manzano?: string | null;
+  lote?: string | null;
+  superficie?: number | null;
   sup_avance?: number | null;
   sup_aprobada?: number | null;
   sup_construida?: number | null;

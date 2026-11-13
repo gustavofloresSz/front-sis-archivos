@@ -1,16 +1,16 @@
-<div class="flex h-screen">
-  <mat-drawer-container class="flex-1" [hasBackdrop]="false">
+<div class="main-shell flex h-screen">
+  <mat-drawer-container class="flex-1 min-w-0" [hasBackdrop]="esMovil()">
 
     <!-- Sidebar -->
-    <mat-drawer #drawer mode="side" [opened]="true"
-      class="w-60 !border-r-0 flex flex-col overflow-y-auto">
+    <mat-drawer #drawer [mode]="esMovil() ? 'over' : 'side'" [opened]="!esMovil()"
+      (click)="esMovil() && drawer.close()" class="flex flex-col overflow-y-auto">
 
       <!-- Logo -->
-      <div class="flex items-center gap-3 px-4 py-5 border-b border-white/8">
+      <div class="brand-block flex items-center gap-3 px-4 py-5 border-b">
         <img src="/imagenes/logo_alcaldia.png" alt="" class="h-20 w-auto object-contain">
         <div>
-          <p class="text-base font-medium text-slate-100">GAMS</p>
-          <p class="text-xs text-slate-500">Sistema de Archivos</p>
+          <p class="brand-title text-base font-medium">GAMS</p>
+          <p class="shell-muted text-xs">Sistema de Archivos</p>
         </div>
       </div>
 
@@ -53,7 +53,7 @@
       @if (puede('tipo_tramite', 'ver') || puede('clasificacion_tramite', 'ver')) {
       <nav class="flex-1 px-2 py-0 space-y-1">
         <p class="nav-header px-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500 mb-2 mt-2">
-          Catálogos de trámites
+          Catálogos
         </p>
         @if (puede('tipo_tramite', 'ver')) {
         <a routerLink="/main/tipo-tramite" routerLinkActive="active"
@@ -77,6 +77,13 @@
         <p class="nav-header px-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500 mb-2 mt-2">
           Organización física
         </p>
+        @if (puede('institucion', 'ver')) {
+        <a routerLink="/main/instituciones" routerLinkActive="active"
+          class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <mat-icon class="!text-[20px] !w-5 !h-5">gite</mat-icon>
+          Instituciones
+        </a>
+        }
         @if (puede('ambiente_fisico', 'ver')) {
         <a routerLink="/main/ambientes-fisicos" routerLinkActive="active"
           class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
@@ -91,17 +98,10 @@
           Estantes
         </a>
         }
-        @if (puede('institucion', 'ver')) {
-        <a routerLink="/main/instituciones" routerLinkActive="active"
-          class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-          <mat-icon class="!text-[20px] !w-5 !h-5">gite</mat-icon>
-          Instituciones
-        </a>
-        }
       </nav>
       }
 
-      <!-- @if (puede('tramite', 'ver') || puede('movimiento_fisico', 'ver')) {
+      @if (puede('tramite', 'ver') || puede('movimiento_fisico', 'ver')) {
       <nav class="flex-1 px-2 py-4 space-y-1">
         <p class="nav-header px-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500 mb-2 mt-2">
           Reportes
@@ -110,18 +110,18 @@
         <a routerLink="/main/reporte-tramites" routerLinkActive="active"
           class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
           <mat-icon class="!text-[20px] !w-5 !h-5">fact_check</mat-icon>
-          Reporte Tramites
+          Reporte trámites
         </a>
         }
         @if (puede('movimiento_fisico', 'ver')) {
         <a routerLink="/main/reporte-movimientos-fisicos" routerLinkActive="active"
           class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
           <mat-icon class="!text-[20px] !w-5 !h-5">move_to_inbox</mat-icon>
-          Reporte movimientos físicos
+          Reporte ubicación física
         </a>
         }
       </nav>
-      } -->
+      }
     </mat-drawer>
 
     <!-- Content -->
@@ -130,20 +130,20 @@
       <!-- Header -->
       <header class="main-header h-14 border-b flex items-center justify-between px-5 flex-shrink-0">
         <div class="flex items-center gap-3">
-          <button mat-icon-button (click)="drawer.toggle()" class="!text-slate-300">
+          <button mat-icon-button (click)="drawer.toggle()" aria-label="Mostrar u ocultar menú lateral" [attr.aria-expanded]="drawer.opened">
             <mat-icon>menu</mat-icon>
           </button>
-          <h1 class="text-base font-medium text-white">Panel Principal</h1>
+          <h1 class="panel-title text-base font-medium">Panel Principal</h1>
         </div>
         
-        <div cdkOverlayOrigin #trigger="cdkOverlayOrigin" class="flex items-center gap-2 cursor-pointer hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors" (click)="isOpen = !isOpen">
-          <mat-icon class="text-white">account_circle</mat-icon>
-          <div class="flex flex-col leading-tight">
-            <span class="text-sm font-medium text-white">{{ fullname() }}</span>
-            <span class="text-xs text-slate-400">{{ rol() }}</span>
+        <button type="button" cdkOverlayOrigin #trigger="cdkOverlayOrigin" class="profile-trigger flex items-center gap-2 px-3 py-1.5 rounded-lg" (click)="isOpen = !isOpen" aria-label="Abrir menú de usuario" [attr.aria-expanded]="isOpen">
+          <mat-icon>account_circle</mat-icon>
+          <div class="profile-meta flex flex-col leading-tight">
+            <span class="text-sm font-medium">{{ fullname() }}</span>
+            <span class="shell-muted text-xs">{{ rol() }}</span>
           </div>
-          <mat-icon class="!text-[18px] text-slate-400">{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-        </div>
+          <mat-icon class="!text-[18px]">{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
 
         <ng-template
           cdkConnectedOverlay
@@ -162,7 +162,7 @@
       </header>
 
       <!-- Main -->
-      <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
+      <main class="main-content flex-1 min-w-0 overflow-y-auto p-3 sm:p-6">
         <router-outlet></router-outlet>
       </main>
 

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {AbstractControl,FormBuilder,FormControl,ReactiveFormsModule,ValidationErrors,Validators,} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -22,6 +23,7 @@ import { AmbienteFisicoService } from '../../../../../services/gestion-tramites/
 import { EstanteFisicoService } from '../../../../../services/gestion-tramites/control-fisico/estante-fisico.service';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { buscarElementoPorId } from '../shared/seleccion-catalogo.utils';
 
 function validarComprobantePago(control: AbstractControl): ValidationErrors | null {
   const numero = String(control.get('numero_comprobante')?.value ?? '').trim();
@@ -82,6 +84,7 @@ export class DialogTramitesComponent implements OnInit {
   private ambienteFisicoService = inject(AmbienteFisicoService);
   private estanteFisicoService = inject(EstanteFisicoService);
   private dialogRef = inject(MatDialogRef<DialogTramitesComponent>);
+  private destroyRef = inject(DestroyRef);
 
   data = inject(MAT_DIALOG_DATA, { optional: true });
 
@@ -99,6 +102,13 @@ export class DialogTramitesComponent implements OnInit {
   ubicacionesFisicas: any[] = [];
   archivosSeleccionados: File[] = [];
   archivosRetiradosIds: number[] = [];
+
+  get archivosExistentes(): any[] {
+    const archivos = this.tramiteEditando?.archivos;
+    return Array.isArray(archivos)
+      ? archivos.filter((archivo) => archivo?.estado === 'ACTIVO')
+      : [];
+  }
   ubicacionPendiente: UbicacionPendiente | null = null;
 
   readonly gestiones = Array.from(
@@ -175,6 +185,21 @@ export class DialogTramitesComponent implements OnInit {
           null,
         Validators.required,
       ],
+      manzano: new FormControl<string | null>(
+        { value: this.tramiteEditando?.manzano ?? null, disabled: true },
+        Validators.maxLength(100),
+      ),
+      lote: new FormControl<string | null>(
+        { value: this.tramiteEditando?.lote ?? null, disabled: true },
+        Validators.maxLength(100),
+      ),
+      superficie: new FormControl<number | null>(
+        {
+          value: this.tramiteEditando?.superficie == null ? null : Number(this.tramiteEditando.superficie),
+          disabled: true,
+        },
+        Validators.min(0),
+      ),
 
       /**
        * En edición representa el estado actual solo como referencia.
@@ -267,6 +292,23 @@ export class DialogTramitesComponent implements OnInit {
     return this.tramiteForm.controls.superficies;
   }
 
+  get esUrbanizacion(): boolean {
+    const id = this.clasificacionForm.controls.clasificacion_tramite_id.value;
+    const clasificacion = buscarElementoPorId(this.clasificacionesTramite, id)
+      ?? buscarElementoPorId([this.tramiteEditando?.clasificacion_tramite].filter(Boolean), id);
+    return String(clasificacion?.nombre ?? '').trim().normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '').toLowerCase() === 'urbanizacion';
+  }
+
+  private actualizarCamposUrbanizacion() {
+    const habilitar = this.esUrbanizacion;
+    for (const campo of ['manzano', 'lote', 'superficie'] as const) {
+      const control = this.clasificacionForm.controls[campo];
+      if (habilitar && control.disabled) control.enable({ emitEvent: false });
+      if (!habilitar && control.enabled) control.disable({ emitEvent: false });
+    }
+  }
+
   get archivoUbicacionForm() {
     return this.tramiteForm.controls.archivoUbicacion;
   }
@@ -276,6 +318,10 @@ export class DialogTramitesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.actualizarCamposUrbanizacion();
+    this.clasificacionForm.controls.clasificacion_tramite_id.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.actualizarCamposUrbanizacion());
     this.cargarTiposTramite();
     this.cargarClasificacionesTramite();
     this.cargarEstadosTramite();
@@ -302,6 +348,7 @@ export class DialogTramitesComponent implements OnInit {
             clasificacion.estado !== false ||
             Number(clasificacion.id) === clasificacionActualId,
         );
+        this.actualizarCamposUrbanizacion();
       },
       error: (err) => console.error(err),
     });
@@ -359,7 +406,7 @@ export class DialogTramitesComponent implements OnInit {
     this.archivosRetiradosIds = archivoIds;
   }
 
-  guardarTramite() {
+  guardarTramite(stepper: MatStepper) {
     this.errorMensaje = null;
 
     const errorComprobante = this.obtenerErrorComprobante();
@@ -370,6 +417,11 @@ export class DialogTramitesComponent implements OnInit {
 
     if (errorComprobante || this.tramiteForm.invalid) {
       this.tramiteForm.markAllAsTouched();
+      if (this.esEdicion) {
+        const pasoInvalido = stepper.steps.toArray().findIndex((paso) => paso.stepControl?.invalid);
+        if (pasoInvalido >= 0) stepper.selectedIndex = pasoInvalido;
+        this.errorMensaje ??= 'Revisa los campos marcados antes de guardar.';
+      }
       return;
     }
 
@@ -425,7 +477,7 @@ export class DialogTramitesComponent implements OnInit {
 
     const datos: Record<string, unknown> = {
       ...valores.datosGenerales,
-      ...valores.clasificacion,
+      ...this.clasificacionForm.value,
       ...valores.superficies,
       ubicacion_fisica_id: valores.archivoUbicacion.ubicacion_fisica_id,
       observaciones: valores.archivoUbicacion.observaciones,
@@ -478,6 +530,11 @@ export class DialogTramitesComponent implements OnInit {
       descripcion: valores.datosGenerales.descripcion ?? '',
       zona: valores.datosGenerales.zona ?? '',
       distrito: valores.datosGenerales.distrito ?? '',
+      ...(this.esUrbanizacion && {
+        manzano: valores.clasificacion.manzano,
+        lote: valores.clasificacion.lote,
+        superficie: valores.clasificacion.superficie,
+      }),
       sup_avance: valores.superficies.sup_avance,
       sup_aprobada: valores.superficies.sup_aprobada,
       sup_construida: valores.superficies.sup_construida,

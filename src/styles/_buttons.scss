@@ -1,0 +1,39 @@
+/* Acciones explícitas: no afecta estados, alertas ni botones de advertencia. */
+.mat-mdc-button-base:is(.app-button-primary, .app-button-secondary):not(.mat-warn):not([color='warn']) {
+  --action-background: #e5e7eb;
+  --action-hover: #d1d5db;
+  --action-text: #334155;
+  height: 2.75rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background-color: var(--action-background) !important;
+  color: var(--action-text) !important;
+  box-shadow: none !important;
+  font-weight: 500;
+
+  &.app-button-primary {
+    --action-background: #1d4ed8;
+    --action-hover: #1e40af;
+    --action-text: #ffffff;
+  }
+
+  &:hover:not(:disabled):not(.mat-mdc-button-disabled) {
+    background-color: var(--action-hover) !important;
+  }
+
+  &:disabled, &.mat-mdc-button-disabled {
+    background-color: #f1f5f9 !important;
+    color: #94a3b8 !important;
+  }
+
+  &:is(.mat-mdc-icon-button, .mat-mdc-mini-fab) {
+    width: 2.75rem;
+    padding: .5rem;
+    min-width: 2.75rem;
+    flex-shrink: 0;
+  }
+}
+
+@media (pointer: coarse) {
+  .mat-mdc-button-base:is(.app-button-primary, .app-button-secondary) { min-height: 44px; }
+}

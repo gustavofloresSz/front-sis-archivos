@@ -3,6 +3,7 @@ import { Component, computed, input, signal } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-clasificacion-step',
@@ -11,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatInputModule,
   ],
   template: `
     <div [formGroup]="form()" class="grid grid-cols-1 gap-4 pt-5 md:grid-cols-2 lg:grid-cols-4">
@@ -69,7 +71,7 @@ import { MatSelectModule } from '@angular/material/select';
         <mat-error>La clasificación es requerida</mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="campo-estado">
         <mat-label>{{ esEdicion() ? 'Estado actual' : 'Estado posterior al registro' }}</mat-label>
 
         <mat-select formControlName="estado_actual_id" [required]="esEdicion()">
@@ -88,17 +90,37 @@ import { MatSelectModule } from '@angular/material/select';
 
         @if (esEdicion()) {
           <mat-hint>El estado se modifica desde la acción específica.</mat-hint>
-        } @else {
-          <mat-hint>
-            Opcional. El sistema registra Archivado y luego aplica el estado seleccionado.
-          </mat-hint>
         }
 
         @if (esEdicion()) {
           <mat-error>El estado actual es requerido</mat-error>
         }
       </mat-form-field>
+      @if (esUrbanizacion()) {
+        <div class="col-span-full grid grid-cols-1 gap-4 md:grid-cols-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Manzano</mat-label>
+            <input matInput formControlName="manzano" maxlength="100">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Lote</mat-label>
+            <input matInput formControlName="lote" maxlength="100">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Superficie (m²)</mat-label>
+            <input matInput type="number" min="0" step="0.01" formControlName="superficie">
+            <mat-error>Ingrese una superficie mayor o igual a cero</mat-error>
+          </mat-form-field>
+        </div>
+      }
     </div>
+  `,
+  styles: `
+    :host ::ng-deep .campo-estado .mat-mdc-form-field-hint-wrapper {
+      padding-inline: 0;
+    }
   `,
 })
 export class ClasificacionStepComponent {
@@ -107,6 +129,7 @@ export class ClasificacionStepComponent {
   clasificacionesTramite = input<any[]>([]);
   estadosTramite = input<any[]>([]);
   esEdicion = input(false);
+  esUrbanizacion = input(false);
 
   segmentoSeleccionado = signal<string | null>(null);
 

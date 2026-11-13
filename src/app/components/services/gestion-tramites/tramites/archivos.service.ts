@@ -13,14 +13,18 @@ export class ArchivosService {
     return this.http.get<any[]>(`${this.apiUrl}/archivo`,);
   }
 
-  verArchivo(id: number) {
-    return this.http.get(`${this.apiUrl}/archivo/ver/${id}`,{responseType: 'blob',},
-    );
-
+  verArchivo(id: number, reporteTramiteId?: number) {
+    const ruta = reporteTramiteId
+      ? `/reportes/tramites/${reporteTramiteId}/archivos/${id}`
+      : `/archivo/ver/${id}`;
+    return this.http.get(`${this.apiUrl}${ruta}`, { responseType: 'blob' });
   }
 
-  descargarArchivo(id: number) {
-    return this.http.get(`${this.apiUrl}/archivo/descargar/${id}`, {
+  descargarArchivo(id: number, reporteTramiteId?: number) {
+    const ruta = reporteTramiteId
+      ? `/reportes/tramites/${reporteTramiteId}/archivos/${id}/descargar`
+      : `/archivo/descargar/${id}`;
+    return this.http.get(`${this.apiUrl}${ruta}`, {
       responseType: 'blob',
     });
   }

@@ -7,6 +7,13 @@ export interface AplicarSelloDocumentoResponse {
   archivo: any;
 }
 
+export const TIPOS_SELLO = [
+  { valor: 'plano', etiqueta: 'Plano' },
+  { valor: 'resolucion', etiqueta: 'Resolución' },
+] as const;
+
+export type TipoSello = (typeof TIPOS_SELLO)[number]['valor'];
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,10 +21,10 @@ export class SelloDocumentoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  aplicar(archivoId: number) {
+  aplicar(archivoId: number, tiposSello: TipoSello[]) {
     return this.http.post<AplicarSelloDocumentoResponse>(
       `${this.apiUrl}/sello-documento/aplicar`,
-      { archivo_id: archivoId },
+      { archivo_id: archivoId, tipos_sello: tiposSello },
     );
   }
 }

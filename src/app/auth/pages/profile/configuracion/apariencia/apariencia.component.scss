@@ -1,0 +1,16 @@
+:host { display: block; }
+.apariencia-section { padding: 1.5rem; }
+h2 { margin: 0 0 .5rem; font-size: 1.125rem; font-weight: 600; color: #1e293b; }
+.descripcion, .apariencia-opcion p { color: #64748b; font-size: .875rem; line-height: 1.6; }
+.descripcion { margin: 0 0 1.25rem; max-width: 40rem; }
+mat-radio-group { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; max-width: 40rem; }
+.apariencia-opcion { min-width: 0; padding: 1rem; border: 1px solid #cbd5e1; border-radius: .5rem; background: white; }
+.apariencia-opcion.seleccionada { border-color: var(--app-primary); box-shadow: 0 0 0 1px var(--app-primary); }
+.apariencia-opcion p { margin: .25rem 0 0; }
+.vista-previa { position: relative; height: 7rem; margin-bottom: .75rem; overflow: hidden; border: 1px solid #cbd5e1; border-radius: .25rem; background: #f8fafc; }
+.vista-menu { position: absolute; inset: 0 auto 0 0; width: 26%; background: #f1f5f9; border-right: 1px solid #cbd5e1; }
+.vista-barra { position: absolute; inset: 0 0 auto 26%; height: 22%; background: #f1f5f9; border-bottom: 1px solid #cbd5e1; }
+.vista-contenido { position: absolute; inset: 34% 7% 12% 34%; background: white; border: 1px solid #e2e8f0; }
+.oscuro .vista-menu, .oscuro .vista-barra { background: #212529; }
+.mensaje { min-height: 1.5rem; color: #1e40af; font-size: .875rem; }
+@media (max-width: 600px) { mat-radio-group { grid-template-columns: 1fr; } .apariencia-section { padding: 1rem; } }

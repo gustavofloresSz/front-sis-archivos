@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { FlujoGraficoFisicoComponent } from '../../shared/flujo-grafico-fisico/flujo-grafico-fisico.component';
+// import { FlujoGraficoFisicoComponent } from '../../shared/flujo-grafico-fisico/flujo-grafico-fisico.component';
 import { formatearFechaHora } from '../../../shared/presentacion/fecha-presentacion';
 import { describirUbicacionFisica } from '../../../shared/presentacion/ubicacion-fisica-presentacion';
 import {
@@ -45,7 +45,7 @@ type ModoVistaReporteFisico = 'busqueda' | 'detalle';
     MatTableModule,
     MatTabsModule,
     DetalleFisicoComponent,
-    FlujoGraficoFisicoComponent,
+    // FlujoGraficoFisicoComponent, // Conservado para reactivar la pestaña gráfica.
   ],
   templateUrl: './reporte-movimientos-fisicos.component.html',
   styleUrl: './reporte-movimientos-fisicos.component.scss',

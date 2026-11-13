@@ -1,36 +1,7 @@
-:host {
-  display: block;
-}
+@use '../../../shared/presentacion/detalle-bloques';
 
-.detalle-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-.detalle-grid dt {
-  margin-bottom: 4px;
-  color: #64748b;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.detalle-grid dd {
-  margin: 0;
-  color: #1f2937;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-@media (min-width: 768px) {
-  .detalle-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1024px) {
-  .detalle-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.detalle-comprobante {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  grid-template-columns: minmax(0, 1fr);
 }

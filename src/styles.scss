@@ -1,9 +1,42 @@
-/* You can add global styles to this file, and also import other style files */
+@use './styles/buttons';
+@use './styles/compact';
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 @import "tailwindcss";
+
+/* Apariencia del marco principal. El contenido conserva sus colores de lectura. */
+:root {
+  --app-primary: #1d4ed8;
+  --app-content: #f8fafc;
+  --app-sidebar: #f1f5f9;
+  --app-header: #f1f5f9;
+  --app-shell-text: #334155;
+  --app-shell-muted: #64748b;
+  --app-shell-border: #cbd5e1;
+  --app-nav-hover: #e2e8f0;
+  --app-nav-active: #dbeafe;
+  --app-nav-active-text: #1e40af;
+}
+
+:root[data-apariencia='oscuro'] {
+  --app-sidebar: #212529;
+  --app-header: #212529;
+  --app-shell-text: #f8fafc;
+  --app-shell-muted: #cbd5e1;
+  --app-shell-border: #475569;
+  --app-nav-hover: #374151;
+  --app-nav-active: #075985;
+  --app-nav-active-text: #ffffff;
+}
+
+.mat-mdc-button-base:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 3px; }
+
+.mat-mdc-snack-bar-container.aviso-exito-archivos {
+  --mdc-snackbar-container-color: #fff;
+  --mdc-snackbar-supporting-text-color: #111827;
+}
 
 
 .mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {

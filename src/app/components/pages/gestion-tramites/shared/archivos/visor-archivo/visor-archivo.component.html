@@ -1,22 +1,42 @@
 <div class="mt-4 overflow-hidden rounded-xl border border-gray-300 bg-white">
   <div class="flex items-center justify-between gap-3 bg-slate-800 px-4 py-2 text-white">
     <span class="truncate text-sm font-medium">{{ nombre }}</span>
-    <button
+    <div class="flex shrink-0 items-center">
+      <button mat-icon-button type="button" class="visor-control"
+        aria-label="Alejar PDF" title="Alejar"
+        [disabled]="zoom <= zoomMinimo" (click)="ajustarZoom(-25)">
+        <mat-icon aria-hidden="true">remove</mat-icon>
+      </button>
+      <span class="min-w-[3.25rem] text-center text-xs tabular-nums" aria-live="polite">{{ zoom }} %</span>
+      <button mat-icon-button type="button" class="visor-control"
+        aria-label="Acercar PDF" title="Acercar"
+        [disabled]="zoom >= zoomMaximo" (click)="ajustarZoom(25)">
+        <mat-icon aria-hidden="true">add</mat-icon>
+      </button>
+      <button
       mat-icon-button
       type="button"
-      class="text-white"
+      class="visor-control"
       aria-label="Cerrar vista previa del PDF"
       title="Cerrar vista previa"
       (click)="cerrar.emit()"
     >
-      <mat-icon>close</mat-icon>
-    </button>
+      <mat-icon aria-hidden="true">close</mat-icon>
+      </button>
+    </div>
   </div>
 
-  <iframe
-    class="w-full border-0"
-    [style.height]="altura"
-    [src]="url"
-    title="Vista previa del PDF"
-  ></iframe>
+  <div class="overflow-auto bg-[#262626]"
+    [style.height]="'calc(' + altura + ' * ' + (Math.min(zoom, 100) / 100) + ')'">
+    <div class="relative mx-auto overflow-hidden" [style.width.%]="zoom" [style.height.%]="Math.max(zoom, 100)">
+      <iframe
+        class="absolute left-0 top-0 origin-top-left border-0"
+        [style.width.%]="10000 / zoom"
+        [style.height.%]="10000 / zoom"
+        [style.transform]="'scale(' + zoom / 100 + ')'"
+        [src]="url"
+        title="Vista previa del PDF"
+      ></iframe>
+    </div>
+  </div>
 </div>

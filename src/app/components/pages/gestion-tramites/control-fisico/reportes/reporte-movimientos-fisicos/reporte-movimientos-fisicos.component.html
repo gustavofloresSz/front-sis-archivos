@@ -2,19 +2,16 @@
   @if (modoVista === 'busqueda') {
     <div class="mb-6">
       <h1 class="m-0 text-2xl font-bold text-slate-800">
-        Reporte de movimientos físicos
+        Reporte ubicación física
       </h1>
 
-      <p class="m-0 mt-1 text-sm text-slate-500">
-        Consulte la ubicación física, el estado actual y la trazabilidad del expediente.
-      </p>
     </div>
   }
 
   @if (modoVista === 'busqueda') {
     <mat-card class="search-card !border-0 !bg-transparent !shadow-none">
       <mat-card-content class="search-card-content !p-0">
-        <div class="mb-4 flex max-w-3xl items-center gap-2">
+        <div class="mb-4 flex max-w-xl items-center gap-2">
           <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-0 flex-1">
             <mat-label>Buscar trámite</mat-label>
 
@@ -175,7 +172,7 @@
                       color="primary"
                       type="button"
                       (click)="verReporte(tramite)"
-                    >
+                     class="app-button-secondary">
                       <mat-icon>visibility</mat-icon>
                       Ver reporte
                     </button>
@@ -231,7 +228,7 @@
                 mat-stroked-button
                 color="primary"
                 type="button"
-                class="mb-4"
+                class="app-button-secondary mb-4"
                 (click)="volverAResultados()"
               >
                 <mat-icon>arrow_back</mat-icon>
@@ -269,6 +266,7 @@
                 </div>
               </mat-tab>
 
+              <!-- Flujo gráfico físico conservado; pestaña desactivada temporalmente.
               <mat-tab>
                 <ng-template mat-tab-label>
                   <mat-icon class="mr-2">account_tree</mat-icon>
@@ -292,6 +290,7 @@
                   ></app-flujo-grafico-fisico>
                 </div>
               </mat-tab>
+              -->
             </mat-tab-group>
           }
         </mat-card-content>

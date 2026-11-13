@@ -18,6 +18,18 @@ export function esArchivoTramitePermitido(archivo: File): boolean {
   return EXTENSIONES_PERMITIDAS.has(extensionArchivo(archivo.name));
 }
 
+export function acumularArchivosSeleccionados(actuales: File[], nuevos: File[]): File[] {
+  const identificadores = new Set<string>();
+  return [...actuales, ...nuevos].filter((archivo) => {
+    const identificador = JSON.stringify([
+      archivo.name, archivo.size, archivo.lastModified, archivo.type,
+    ]);
+    if (identificadores.has(identificador)) return false;
+    identificadores.add(identificador);
+    return true;
+  });
+}
+
 export function esArchivoPdf(archivo: unknown): boolean {
   return extensionArchivo(obtenerNombreArchivo(archivo)) === '.pdf';
 }

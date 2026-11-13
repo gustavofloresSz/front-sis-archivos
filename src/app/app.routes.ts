@@ -14,7 +14,6 @@ import { ClasificacionTramiteComponent } from './components/pages/gestion-tramit
 import { AmbienteFisicoComponent } from './components/pages/gestion-tramites/control-fisico/ambientes/ambiente-fisico.component';
 import { EstanteFisicoComponent } from './components/pages/gestion-tramites/control-fisico/estantes/estante-fisico.component';
 import { RolesComponent } from './components/pages/roles/roles.component';
-import { ResumenWorkflowTramitesComponent } from './components/pages/gestion-tramites/tramites/reportes/resumen-workflow-tramites/resumen-workflow-tramites.component';
 
 export const routes: Routes = [
     {
@@ -66,12 +65,6 @@ export const routes: Routes = [
             {
                 path:'configuracion',
                 component:ConfiguracionComponent
-            },
-            //reporte workflow estados
-            {
-                path:'reporte-tramites/resumen-flujo',
-                component:ResumenWorkflowTramitesComponent,
-                data: { permiso: { recurso: 'tramite', accion: 'ver' } },
             },
             {
                 path:'reporte-tramites',

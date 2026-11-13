@@ -1,22 +1,16 @@
 <section class="sello-panel">
-  <div class="sello-intro">
-    <p>
-      Consulte los documentos asociados y gestione el sello de los PDF.
-      @if (puedeGestionarArchivos) {
-        Puede adjuntar archivos PDF, imágenes, Word o Excel.
-      }
-    </p>
-
-    @if (puedeGestionarArchivos) {
+  @if (puedeGestionarArchivos) {
+    <div class="sello-intro">
+      <p>Formatos permitidos: PDF, imágenes, Word y Excel.</p>
       <button
         mat-flat-button
         color="primary"
         type="button"
         [disabled]="cargandoArchivos"
         (click)="selectorArchivos.click()"
-      >
+       class="app-button-primary">
         <mat-icon>upload_file</mat-icon>
-        Agregar archivo
+        Seleccionar archivos
       </button>
 
       <input
@@ -27,8 +21,30 @@
         multiple
         (change)="seleccionarArchivos($event)"
       >
-    }
-  </div>
+    </div>
+  }
+
+  <ng-template #avisoExito let-aviso>
+    <div class="flex items-center gap-2 px-4 py-3 text-sm font-medium">
+      <mat-icon aria-hidden="true" class="shrink-0 text-green-700">check_circle</mat-icon>
+      <span>{{ aviso.mensaje }}</span>
+    </div>
+    <div class="sello-aviso-tiempo" aria-hidden="true">
+      <div class="sello-aviso-restante" [class.activo]="aviso.abierto()"
+        [style.animation-duration.ms]="aviso.duracion"></div>
+    </div>
+  </ng-template>
+
+  <ng-template #confirmarRetiro let-nombre>
+    <h2 mat-dialog-title>Eliminar archivo</h2>
+    <mat-dialog-content>
+      <p>¿Deseas eliminar <strong class="break-all">{{ nombre }}</strong>?</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close type="button" class="app-button-secondary">Cancelar</button>
+      <button mat-flat-button type="button" [mat-dialog-close]="true" class="app-button-primary">Confirmar</button>
+    </mat-dialog-actions>
+  </ng-template>
 
   @if (mensaje) {
     <div class="sello-message" [class.sello-message-error]="mensajeError">
@@ -38,83 +54,103 @@
   }
 
   @if (puedeGestionarArchivos && archivosSeleccionados.length) {
-    <div class="sello-selection">
+    <section class="sello-selection" aria-labelledby="titulo-archivos-pendientes">
       <div class="sello-selection-header">
-        <span>
-          {{ archivosSeleccionados.length }}
-          {{ archivosSeleccionados.length === 1 ? 'archivo seleccionado' : 'archivos seleccionados' }}
-        </span>
+        <div>
+          <h3 id="titulo-archivos-pendientes" class="sello-titulo">Pendientes de adjuntar</h3>
+          <span class="sello-conteo">
+            {{ archivosSeleccionados.length }}
+            {{ archivosSeleccionados.length === 1 ? 'archivo seleccionado' : 'archivos seleccionados' }}
+          </span>
+        </div>
         <button
           mat-flat-button
           color="primary"
           type="button"
-          [disabled]="cargandoArchivos"
+          [disabled]="gestionEnCurso"
           (click)="agregarArchivos()"
-        >
+         class="app-button-primary">
           @if (cargandoArchivos) {
             <mat-spinner diameter="20"></mat-spinner>
           } @else {
             <mat-icon>cloud_upload</mat-icon>
           }
-          {{ cargandoArchivos ? 'Agregando...' : 'Agregar al trámite' }}
+          {{ cargandoArchivos ? 'Guardando...' : 'Guardar archivos' }}
         </button>
       </div>
 
-      <div class="sello-selection-list">
-        @for (archivo of archivosSeleccionados; track archivo.name + archivo.size; let i = $index) {
-          <div class="sello-selection-file">
-            <mat-icon>{{ iconoParaArchivo(archivo) }}</mat-icon>
-            <span class="truncate">{{ nombreArchivoSinExtension(archivo) }}</span>
-            <span class="sello-extension">{{ extensionArchivo(archivo) }}</span>
-            <button
-              mat-icon-button
-              type="button"
-              aria-label="Quitar archivo seleccionado"
-              [disabled]="cargandoArchivos"
-              (click)="quitarArchivoSeleccionado(i)"
-            >
-              <mat-icon>close</mat-icon>
-            </button>
+      <div class="sello-list sello-list-pendiente" role="table" aria-labelledby="titulo-archivos-pendientes">
+        <div class="sello-list-header" role="row">
+          <span role="columnheader">Nombre</span>
+          <span role="columnheader">Tipo</span>
+          <span role="columnheader">Acciones</span>
+        </div>
+        @for (archivo of archivosSeleccionados; track archivo; let i = $index) {
+          <div class="sello-file" role="row">
+            <div class="sello-file-main" role="cell">
+              <mat-icon class="sello-icono-pendiente" aria-hidden="true">{{ iconoParaArchivo(archivo) }}</mat-icon>
+              <span class="sello-file-name">{{ nombreArchivo(archivo) }}</span>
+            </div>
+            <div class="sello-file-type" role="cell">
+              <span class="sello-tipo">{{ tipoArchivo(archivo) }}</span>
+            </div>
+            <div class="sello-file-actions" role="cell">
+              <button
+                mat-icon-button
+                type="button"
+                [attr.aria-label]="'Quitar ' + nombreArchivo(archivo)"
+                title="Quitar de la selección"
+                [disabled]="cargandoArchivos"
+                (click)="quitarArchivoSeleccionado(i)"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
           </div>
         }
       </div>
-    </div>
+    </section>
   }
 
+  <section class="sello-cargados" aria-labelledby="titulo-archivos-cargados">
+  <h3 id="titulo-archivos-cargados" class="sello-titulo">Archivos cargados</h3>
   @if (archivosActivos.length === 0) {
     <div class="sello-empty">
       <mat-icon>folder_open</mat-icon>
-      <p>Este trámite no tiene archivos activos.</p>
+      <p>Este trámite aún no tiene archivos cargados.</p>
     </div>
   } @else {
-    <div class="sello-list">
-      <div class="sello-list-header" aria-hidden="true">
-        <span>Archivo</span>
-        <span>Extensión</span>
-        <span>Acciones</span>
+    <div class="sello-list" [class.sello-list-con-menu]="puedeRetirarArchivos"
+      role="table" aria-labelledby="titulo-archivos-cargados">
+      <div class="sello-list-header" role="row">
+        <span role="columnheader">Nombre</span>
+        <span role="columnheader">Tipo</span>
+        <span role="columnheader">Acciones</span>
       </div>
 
       @for (archivo of archivosActivos; track archivo.id) {
-        <article class="sello-file">
-          <div class="sello-file-main">
+        <div class="sello-file" role="row">
+          <div class="sello-file-main" role="cell">
             <div class="sello-file-icon">
               <mat-icon>{{ iconoParaArchivo(archivo) }}</mat-icon>
             </div>
 
             <div class="sello-file-info">
-              <span class="sello-file-name">{{ nombreArchivoSinExtension(archivo) }}</span>
-              <span
-                class="sello-file-status"
-                [class.sello-file-status-done]="archivo.es_sellado"
-              >
-                {{ esPdf(archivo) ? (archivo.es_sellado ? 'PDF sellado' : 'PDF original') : 'Documento adjunto' }}
-              </span>
+              <span class="sello-file-name">{{ nombreArchivo(archivo) }}</span>
+              @if (archivo.codigo) {
+                <span class="break-all text-xs text-slate-600">Código: {{ archivo.codigo }}</span>
+              }
+              @if (etiquetasSellosAnteriores(archivo); as etiquetas) {
+                <span class="text-xs text-slate-600">Sellos aplicados: {{ etiquetas }}</span>
+              }
             </div>
           </div>
 
-          <span class="sello-extension">{{ extensionArchivo(archivo) }}</span>
+          <div class="sello-file-type" role="cell">
+            <span class="sello-tipo">{{ tipoArchivo(archivo) }}</span>
+          </div>
 
-          <div class="sello-file-actions">
+          <div class="sello-file-actions sello-acciones-cargados" role="cell">
             @if (puedeDescargarArchivos) {
               <button
                 mat-stroked-button
@@ -122,13 +158,14 @@
                 type="button"
                 [disabled]="descargandoArchivoId !== null"
                 (click)="descargarArchivo(archivo)"
-              >
+               class="app-button-secondary sello-accion-descargar"
+               [attr.aria-label]="descargandoArchivoId === archivo.id ? 'Descargando' : 'Descargar'">
                 @if (descargandoArchivoId === archivo.id) {
                   <mat-spinner diameter="20"></mat-spinner>
                 } @else {
                   <mat-icon>download</mat-icon>
                 }
-                {{ descargandoArchivoId === archivo.id ? 'Descargando...' : 'Descargar' }}
+                Descargar
               </button>
             }
 
@@ -139,12 +176,12 @@
                 color="primary"
                 type="button"
                 (click)="verPdf(archivo)"
-              >
+               class="app-button-secondary sello-accion-ver" aria-label="Ver PDF">
                 <mat-icon>visibility</mat-icon>
-                Ver PDF
+                Ver
               </button>
               } @else {
-                <span class="text-xs text-slate-500">Contenido restringido</span>
+                <span class="sello-accion-ver text-xs text-slate-500">Restringido</span>
               }
 
               @if (puedeAplicarSello && !archivo.es_sellado) {
@@ -152,29 +189,43 @@
                   mat-flat-button
                   color="primary"
                   type="button"
-                  [disabled]="aplicandoArchivoId !== null"
+                  [disabled]="gestionEnCurso"
                   (click)="aplicarSello(archivo)"
-                >
+                 class="app-button-primary sello-accion-sello"
+                 [attr.aria-label]="aplicandoArchivoId === archivo.id ? 'Aplicando sello' : 'Aplicar sello'">
                   @if (aplicandoArchivoId === archivo.id) {
                     <mat-spinner diameter="20"></mat-spinner>
                   } @else {
                     <mat-icon>approval</mat-icon>
                   }
-                  {{ aplicandoArchivoId === archivo.id ? 'Aplicando...' : 'Aplicar sello' }}
+                  Aplicar sello
                 </button>
               } @else if (archivo.es_sellado) {
-                <div class="sello-done">
-                  <mat-icon>verified</mat-icon>
+                <div class="sello-done sello-accion-sello">
+                  <mat-icon aria-hidden="true">check</mat-icon>
                   Generado
                 </div>
               }
             } @else {
-              <span class="text-xs text-slate-500">
-                {{ puedeVerArchivos ? 'Sin vista previa' : 'Contenido restringido' }}
+              <span class="sello-accion-sello text-xs text-slate-500">
+                {{ puedeVerArchivos ? 'Sin vista previa' : 'Restringido' }}
               </span>
             }
+            @if (puedeRetirarArchivos) {
+              <button mat-icon-button type="button" class="sello-accion-menu"
+                [matMenuTriggerFor]="menuArchivo" [disabled]="gestionEnCurso"
+                [attr.aria-label]="'Más acciones para ' + nombreArchivo(archivo)">
+                <mat-icon aria-hidden="true">more_vert</mat-icon>
+              </button>
+              <mat-menu #menuArchivo="matMenu">
+                <button mat-menu-item type="button" (click)="confirmarRetiroArchivo(archivo)">
+                  <mat-icon aria-hidden="true">delete_outline</mat-icon>
+                  Eliminar archivo
+                </button>
+              </mat-menu>
+            }
           </div>
-        </article>
+        </div>
       }
     </div>
 
@@ -199,4 +250,5 @@
       />
     }
   }
+  </section>
 </section>

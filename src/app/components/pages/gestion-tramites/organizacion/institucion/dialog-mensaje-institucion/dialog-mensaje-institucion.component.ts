@@ -24,7 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-      <button mat-button (click)="cancelar()">
+      <button mat-button (click)="cancelar()" class="app-button-secondary">
         Cancelar
       </button>
 

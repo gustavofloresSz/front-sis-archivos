@@ -1,10 +1,10 @@
-<div class="p-4 h-[calc(100vh-150px)] flex flex-col">
+<div class="p-4 h-[calc(100vh-130px)] flex flex-col">
   <div class="mb-4">
     <h2 class="text-2xl font-bold">Administración de roles</h2>
   </div>
 
   <div class="mb-4 flex items-center justify-between gap-4">
-    <form class="flex min-w-0 max-w-3xl flex-1 items-center gap-2" (ngSubmit)="buscar()">
+    <form class="flex min-w-0 max-w-md flex-1 items-center gap-2" (ngSubmit)="buscar()">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="min-w-0 flex-1">
         <mat-label>Buscar rol</mat-label>
         <input matInput name="busqueda" [(ngModel)]="busqueda" (ngModelChange)="buscarAlEscribir($event)" placeholder="Nombre o descripción" />
@@ -20,7 +20,7 @@
     </form>
 
     @if (puedeCrear) {
-      <button type="button" mat-mini-fab color="primary" matTooltip="Crear rol" aria-label="Crear rol" (click)="crear()">
+      <button type="button" mat-mini-fab color="primary" matTooltip="Crear rol" aria-label="Crear rol" (click)="crear()" class="app-button-primary">
         <mat-icon>add</mat-icon>
       </button>
     }

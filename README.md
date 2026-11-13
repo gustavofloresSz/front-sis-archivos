@@ -14,7 +14,7 @@ El proyecto fue generado con Angular CLI 19.0.4.
 - Seguimiento del flujo administrativo y su representación gráfica.
 - Asignación y seguimiento de ubicaciones y movimientos físicos.
 - Administración de catálogos, instituciones, ambientes y estantes.
-- Generación y consulta de reportes individuales.
+- Consulta de reportes entre instituciones, con filtros por solicitante, institución y fecha de registro.
 
 ## Organización de `src/app`
 

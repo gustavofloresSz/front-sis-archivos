@@ -70,11 +70,11 @@ import { MatSelectModule } from '@angular/material/select';
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="cancelar()">
+      <button mat-button type="button" (click)="cancelar()" class="app-button-secondary">
         Cancelar
       </button>
 
-      <button mat-flat-button color="primary" type="button" [disabled]="guardando" (click)="guardar()">
+      <button mat-flat-button color="primary" type="button" [disabled]="guardando" (click)="guardar()" class="app-button-primary">
         {{ esEdicion ? 'Actualizar' : 'Registrar' }}
       </button>
     </mat-dialog-actions>
