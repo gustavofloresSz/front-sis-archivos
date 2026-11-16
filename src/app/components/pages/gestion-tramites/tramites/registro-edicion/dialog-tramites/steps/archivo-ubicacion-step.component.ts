@@ -204,8 +204,9 @@ export interface UbicacionPendiente {
         <mat-icon class="upload-icon text-sky-700">upload_file</mat-icon>
         <p class="mt-2 text-sm text-gray-600">
           {{ esEdicion()
-            ? 'Seleccione los nuevos archivos que desea agregar al trámite.'
-            : 'Seleccione archivos PDF, imágenes, Word o Excel.' }}
+            ? 'Seleccione los nuevos archivos que desea agregar al trámite'
+            : 'Seleccione archivos PDF, imágenes, Word o Excel' }}
+          (Máximo {{ maximoArchivos }} archivos).
         </p>
 
         <input
@@ -286,6 +287,7 @@ export class ArchivoUbicacionStepComponent {
   private pdfObjectUrl: string | null = null;
   private pdfSubscription?: Subscription;
   readonly formatosArchivosPermitidos = FORMATOS_ARCHIVOS_TRAMITE;
+  readonly maximoArchivos = CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE;
 
   constructor() {
     this.destroyRef.onDestroy(() => this.cerrarPdf());

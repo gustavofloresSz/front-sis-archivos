@@ -49,6 +49,7 @@ export class ActualizarEstadoTramiteComponent implements OnInit {
   guardando = false;
   error: string | null = null;
   readonly formatosArchivosPermitidos = FORMATOS_ARCHIVOS_TRAMITE;
+  readonly maximoArchivos = CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE;
 
   ngOnInit(): void {
     this.cargarTransiciones();

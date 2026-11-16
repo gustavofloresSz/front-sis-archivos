@@ -75,10 +75,6 @@ import { MatInputModule } from '@angular/material/input';
         <mat-label>{{ esEdicion() ? 'Estado actual' : 'Estado posterior al registro' }}</mat-label>
 
         <mat-select formControlName="estado_actual_id" [required]="esEdicion()">
-          <!-- @if (!esEdicion()) {
-            <mat-option [value]="null">Sin cambio posterior</mat-option>
-          } -->
-
           @for (estado of estadosTramite(); track estado.id) {
             <mat-option [value]="estado.id">{{ estado.nombre }}</mat-option>
           }

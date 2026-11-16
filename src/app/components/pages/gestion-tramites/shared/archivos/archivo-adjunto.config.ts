@@ -1,4 +1,4 @@
-export const CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE = 30;
+export const CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE = 20;
 
 export const FORMATOS_ARCHIVOS_TRAMITE =
   '.pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.xls,.xlsx';

@@ -79,7 +79,9 @@
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p class="m-0 text-sm font-semibold text-slate-800">Documentación adicional</p>
-              <p class="m-0 mt-1 text-xs text-slate-500">Opcional. Adjunte archivos PDF, imágenes, Word o Excel.</p>
+              <p class="m-0 mt-1 text-xs text-slate-500">
+                Opcional. Adjunte archivos PDF, imágenes, Word o Excel (Máximo {{ maximoArchivos }} archivos).
+              </p>
             </div>
             <button mat-stroked-button color="primary" type="button" (click)="selectorArchivos.click()" class="app-button-secondary">
               <mat-icon>attach_file</mat-icon>

@@ -80,6 +80,7 @@ export class SelloDocumentoComponent {
   archivosSeleccionados: File[] = [];
   cargandoArchivos = false;
   readonly formatosArchivosPermitidos = FORMATOS_ARCHIVOS_TRAMITE;
+  readonly maximoArchivos = CANTIDAD_MAXIMA_ARCHIVOS_TRAMITE;
 
   private pdfObjectUrl: string | null = null;
   private pdfSubscription?: Subscription;

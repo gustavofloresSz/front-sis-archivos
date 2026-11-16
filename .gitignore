@@ -17,7 +17,6 @@ yarn-error.log
 /src/environments/environment.ts
 .env
 .env.*
-!.env.example
 
 # IDEs and editors
 .idea/
